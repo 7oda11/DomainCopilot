@@ -104,21 +104,21 @@ Statuses below are planning statuses, not claims that a feature exists.
 
 | Assessment requirement | Planned status | Evidence location / phase |
 |---|---|---|
-| D0 healthcare agents and clinician approval | Planned | Agent contracts, workflow tests, Phase 9–10 |
+| D0 healthcare agents and clinician approval | Partial: case/run/note/decision domain model and approval lifecycle rules exist; agents and review API are pending | `src/DomainCopilot.Domain/Workflows`, `Approvals`, `Notes`; Domain unit tests; agent/API work remains Phase 9–11 |
 | T2 hosted/local automatic fallback and offline operation | Planned | Provider ADR, integration tests, Phase 8 |
 | ≥30 documents / ≥150 pages / synthetic or public only | Planned | Seed corpus manifest and ingestion evidence, Phase 6 |
-| FR-1 ingestion stages, metadata, idempotency, status | Planned | Pipeline tests and API, Phase 6 |
-| FR-2 hybrid retrieval, enhancement, citations, refusal | Planned | Retrieval ADR and evaluation, Phase 7 |
+| FR-1 ingestion stages, metadata, idempotency, status | Partial: source fingerprint, format, version and processing states are modelled; extract/clean/chunk/embed/index adapters remain | `Documents/SourceDocument.cs`; pipeline/API work remains Phase 6 |
+| FR-2 hybrid retrieval, enhancement, citations, refusal | Partial: chunks preserve page/section/version and citations verify quoted text belongs to the cited chunk; retrieval/fusion/refusal use case remains | `Documents/DocumentChunk.cs`, `Evidence/EvidenceCitation.cs`; retrieval ADR and evaluation remain Phase 7 |
 | FR-3 ≥25 golden cases, adversarial/injection, runnable metrics | Planned | Harness and report, Phase 12 |
 | FR-4 typed agents, restricted tools, side effect behind gate | Planned | Agent/tool contracts and tests, Phase 9–10 |
-| FR-5 controls, fallback, inspectable traces, audited approvals | Planned | Workflow/API tests, Phase 9–10, 12 |
+| FR-5 controls, fallback, inspectable traces, audited approvals | Partial: domain run lifecycle enforces ordered safety review and approval; iteration/timeout/retry/fallback/trace persistence remain | `Workflows/CopilotRun.cs`, `Approvals/ApprovalRecord.cs`; Phases 9–10, 12 |
 | FR-6 streaming, progress, cancellation | Planned | API integration tests, Phase 11 |
 | FR-7 documented API, minimal UI/CLI, persistent history | Planned | OpenAPI and demo path, Phase 11, 13 |
 | FR-8 authentication and at least two server-enforced roles | Planned | Authorization tests, Phase 11 |
 | FR-9 correlation, token/cost data, traces, health/readiness | Planned | Observability tests, Phase 9, 11 |
-| Clean Architecture and provider/storage abstractions | Planned | Project references and architecture checks, Phase 2–5, 8 |
+| Clean Architecture and provider/storage abstractions | Partial: project boundaries, automated dependency checks, repository and Unit of Work ports exist; provider and persistence adapters remain | `DomainCopilot.slnx`, `LayerDependencyTests.cs`, `Application/Abstractions/Persistence`; Phases 5, 8 |
 | Relational store, vector store and migrations | Planned | ADR and migration/integration checks, Phase 5 |
-| Tests: unit, integration and contract | Planned | Test projects and CI, Phases 2–13 |
+| Tests: unit, integration and contract | Partial: domain, application and architecture tests exist; integration/contract tests and CI remain | `tests/DomainCopilot.Domain.Tests`, `tests/DomainCopilot.Application.Tests`, `tests/DomainCopilot.ArchitectureTests`; Phases 5–13 |
 | Docker Compose, seed command, `.env.example` | Planned | Clean-start verification, Phase 13 |
 | OWASP controls and `docs/SECURITY.md` | Planned | Threat/control mapping and security tests, Phase 11–13 |
 | ≥4 ADRs | Planned | `docs/adr/`, Phases 5–9 |

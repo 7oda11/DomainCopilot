@@ -1,0 +1,16 @@
+**/bin/
+**/obj/
+.vs/
+.idea/
+.dotnet-cli-home/
+.env
+.env.*
+!.env.example
+*.user
+*.suo
+TestResults/
+coverage/
+coverage.*
+App_Data/
+secrets.json
+*.log
