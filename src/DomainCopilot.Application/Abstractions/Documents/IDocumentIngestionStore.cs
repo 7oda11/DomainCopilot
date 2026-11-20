@@ -13,4 +13,8 @@ public interface IDocumentIngestionStore
         SourceDocument document,
         IReadOnlyCollection<DocumentChunk> chunks,
         CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<DocumentChunk>> GetChunksAsync(Guid documentId, CancellationToken cancellationToken);
+
+    Task MarkIndexedAsync(Guid documentId, CancellationToken cancellationToken);
 }

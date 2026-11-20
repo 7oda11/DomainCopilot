@@ -15,7 +15,7 @@ SQL Server is the requested relational database. The assessment also requires a 
 
 ## Decision
 
-Keep relational records and migrations in SQL Server. Keep vector data behind an Application-owned vector-store contract, implemented initially with a local SQLite file. Store vector dimensions, model identifier and source metadata so incompatible embeddings are not silently mixed. Use deterministic dense ranking; hybrid keyword fusion is added in retrieval phase.
+Keep relational records and migrations in SQL Server. Keep vector data behind an Application-owned vector-store contract, implemented initially with a local SQLite file. Store vector dimensions and model identifier so incompatible embeddings are not silently mixed. Use deterministic exact cosine ranking and combine it with SQL keyword ranking using Reciprocal Rank Fusion as documented in ADR-004.
 
 ## Consequences
 

@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using DomainCopilot.Application.Abstractions.Documents;
+using DomainCopilot.Application.Abstractions.Retrieval;
 using DomainCopilot.Domain.Documents;
 
 namespace DomainCopilot.Application.Features.Ingestion;
@@ -7,6 +8,8 @@ namespace DomainCopilot.Application.Features.Ingestion;
 public sealed class IngestDocumentHandler(
     IEnumerable<IDocumentTextExtractor> extractors,
     IDocumentIngestionStore store,
+    IEmbeddingGenerator embeddingGenerator,
+    IVectorIndex vectorIndex,
     DocumentChunker chunker,
     TimeProvider timeProvider)
 {
@@ -31,9 +34,17 @@ public sealed class IngestDocumentHandler(
             ?? throw new NotSupportedException($"No extractor is registered for {request.Format}.");
         var fingerprint = Convert.ToHexString(SHA256.HashData(request.Content)).ToLowerInvariant();
         var existing = await store.FindByFingerprintAsync(fingerprint, request.Version, cancellationToken);
-        if (existing is not null)
+        if (existing?.Status == DocumentProcessingStatus.Indexed)
         {
             return new IngestDocumentResult(existing.Id, true, 0);
+        }
+
+        if (existing is not null)
+        {
+            var pendingChunks = await store.GetChunksAsync(existing.Id, cancellationToken);
+            await IndexChunksAsync(pendingChunks, cancellationToken);
+            await store.MarkIndexedAsync(existing.Id, cancellationToken);
+            return new IngestDocumentResult(existing.Id, true, pendingChunks.Count);
         }
 
         await using var stream = new MemoryStream(request.Content, writable: false);
@@ -56,9 +67,19 @@ public sealed class IngestDocumentHandler(
         var chunks = chunkTexts.Select((chunk, index) => new DocumentChunk(
             Guid.NewGuid(), document.Id, index, chunk.Text, chunk.Section,
             chunk.PageNumber, document.Version)).ToArray();
-        document.MarkIndexed();
-
         await store.SaveAsync(document, chunks, cancellationToken);
+        await IndexChunksAsync(chunks, cancellationToken);
+        await store.MarkIndexedAsync(document.Id, cancellationToken);
         return new IngestDocumentResult(document.Id, false, chunks.Length);
+    }
+
+    private async Task IndexChunksAsync(IReadOnlyCollection<DocumentChunk> chunks, CancellationToken cancellationToken)
+    {
+        foreach (var chunk in chunks)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var vector = await embeddingGenerator.GenerateAsync(chunk.Text, cancellationToken);
+            await vectorIndex.UpsertAsync(chunk.Id, embeddingGenerator.ModelId, vector, cancellationToken);
+        }
     }
 }

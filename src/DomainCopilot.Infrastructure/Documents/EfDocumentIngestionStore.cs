@@ -25,4 +25,15 @@ public sealed class EfDocumentIngestionStore(AppDbContext dbContext) : IDocument
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyList<DocumentChunk>> GetChunksAsync(Guid documentId, CancellationToken cancellationToken) =>
+        await dbContext.DocumentChunks.AsNoTracking().Where(chunk => chunk.DocumentId == documentId)
+            .OrderBy(chunk => chunk.Ordinal).ToListAsync(cancellationToken);
+
+    public async Task MarkIndexedAsync(Guid documentId, CancellationToken cancellationToken)
+    {
+        var document = await dbContext.SourceDocuments.SingleAsync(item => item.Id == documentId, cancellationToken);
+        document.MarkIndexed();
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
 }

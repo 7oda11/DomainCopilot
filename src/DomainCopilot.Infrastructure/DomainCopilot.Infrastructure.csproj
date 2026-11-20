@@ -7,7 +7,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PdfPig" Version="0.1.12" />
+    <!-- Pin this transitive package above the audited vulnerable version 9.0.20. -->
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.21" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10" />
+    <!-- Pin the native SQLite bundle above the audited vulnerable version 2.1.11. -->
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.14" />
     <ProjectReference Include="..\DomainCopilot.Application\DomainCopilot.Application.csproj" />
     <ProjectReference Include="..\DomainCopilot.Domain\DomainCopilot.Domain.csproj" />
   </ItemGroup>
