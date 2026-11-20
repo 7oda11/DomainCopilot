@@ -1,8 +1,9 @@
 using DomainCopilot.Domain.Errors;
+using DomainCopilot.Domain;
 
 namespace DomainCopilot.Domain.Cases;
 
-public sealed class ClinicalCase
+public sealed class ClinicalCase : IAggregateRoot
 {
     public Guid Id { get; }
     public string CaseSummary { get; }

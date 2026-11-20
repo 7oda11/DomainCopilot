@@ -1,6 +1,6 @@
 # Domain Copilot
 
-Healthcare Domain Copilot for assessment variant D0T2. The project is being built in reviewed phases; this repository currently contains the Clean Architecture foundation and its dependency-boundary tests.
+Healthcare Domain Copilot for assessment variant D0T2. The project is being built in reviewed phases; this repository currently contains the Clean Architecture foundation, core domain rules and a first Application use case for starting a run.
 
 ## Architecture
 

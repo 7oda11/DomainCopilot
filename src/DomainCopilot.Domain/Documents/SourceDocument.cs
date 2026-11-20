@@ -1,8 +1,9 @@
 using DomainCopilot.Domain.Errors;
+using DomainCopilot.Domain;
 
 namespace DomainCopilot.Domain.Documents;
 
-public sealed class SourceDocument
+public sealed class SourceDocument : IAggregateRoot
 {
     public Guid Id { get; }
     public string SourceName { get; }

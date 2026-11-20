@@ -2,10 +2,11 @@ using DomainCopilot.Domain.Approvals;
 using DomainCopilot.Domain.Cases;
 using DomainCopilot.Domain.Errors;
 using DomainCopilot.Domain.Notes;
+using DomainCopilot.Domain;
 
 namespace DomainCopilot.Domain.Workflows;
 
-public sealed class CopilotRun
+public sealed class CopilotRun : IAggregateRoot
 {
     public Guid Id { get; }
     public Guid CaseId { get; }

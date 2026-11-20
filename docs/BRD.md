@@ -116,9 +116,9 @@ Statuses below are planning statuses, not claims that a feature exists.
 | FR-7 documented API, minimal UI/CLI, persistent history | Planned | OpenAPI and demo path, Phase 11, 13 |
 | FR-8 authentication and at least two server-enforced roles | Planned | Authorization tests, Phase 11 |
 | FR-9 correlation, token/cost data, traces, health/readiness | Planned | Observability tests, Phase 9, 11 |
-| Clean Architecture and provider/storage abstractions | Partial: project boundaries and automated dependency checks exist; provider and persistence adapters remain | `DomainCopilot.slnx`, `LayerDependencyTests.cs`; Phases 4–5, 8 |
+| Clean Architecture and provider/storage abstractions | Partial: project boundaries, automated dependency checks, repository and Unit of Work ports exist; provider and persistence adapters remain | `DomainCopilot.slnx`, `LayerDependencyTests.cs`, `Application/Abstractions/Persistence`; Phases 5, 8 |
 | Relational store, vector store and migrations | Planned | ADR and migration/integration checks, Phase 5 |
-| Tests: unit, integration and contract | Partial: domain rule and architecture tests exist; integration/contract tests and CI remain | `tests/DomainCopilot.Domain.Tests`, `tests/DomainCopilot.ArchitectureTests`; Phases 5–13 |
+| Tests: unit, integration and contract | Partial: domain, application and architecture tests exist; integration/contract tests and CI remain | `tests/DomainCopilot.Domain.Tests`, `tests/DomainCopilot.Application.Tests`, `tests/DomainCopilot.ArchitectureTests`; Phases 5–13 |
 | Docker Compose, seed command, `.env.example` | Planned | Clean-start verification, Phase 13 |
 | OWASP controls and `docs/SECURITY.md` | Planned | Threat/control mapping and security tests, Phase 11–13 |
 | ≥4 ADRs | Planned | `docs/adr/`, Phases 5–9 |
