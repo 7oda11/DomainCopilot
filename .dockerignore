@@ -1,0 +1,7 @@
+**/bin
+**/obj
+.git
+.dotnet-cli-home
+App_Data
+.env
+*.db
