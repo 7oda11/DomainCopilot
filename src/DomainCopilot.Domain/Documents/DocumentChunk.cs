@@ -4,13 +4,17 @@ namespace DomainCopilot.Domain.Documents;
 
 public sealed class DocumentChunk
 {
-    public Guid Id { get; }
-    public Guid DocumentId { get; }
-    public int Ordinal { get; }
-    public string Text { get; }
-    public string? Section { get; }
-    public int? PageNumber { get; }
-    public string SourceVersion { get; }
+    public Guid Id { get; private set; }
+    public Guid DocumentId { get; private set; }
+    public int Ordinal { get; private set; }
+    public string Text { get; private set; } = string.Empty;
+    public string? Section { get; private set; }
+    public int? PageNumber { get; private set; }
+    public string SourceVersion { get; private set; } = string.Empty;
+
+    private DocumentChunk()
+    {
+    }
 
     public DocumentChunk(
         Guid id,

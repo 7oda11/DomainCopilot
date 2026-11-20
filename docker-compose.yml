@@ -1,0 +1,54 @@
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+
+  api:
+    build: .
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Database__ApplyMigrationsOnStartup: "true"
+      ConnectionStrings__DefaultConnection: "Server=sql-server;Database=DomainCopilot;User Id=sa;Password=${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env};TrustServerCertificate=True;Encrypt=True"
+      Authentication__Authority: ${AUTHENTICATION_AUTHORITY:?Set AUTHENTICATION_AUTHORITY in .env}
+      Authentication__Audience: ${AUTHENTICATION_AUDIENCE:-domain-copilot-api}
+      AI__PrimaryProvider: ${AI_PRIMARY_PROVIDER:-gemini}
+      AI__FallbackProvider: ollama
+      AI__Gemini__ApiKey: ${GEMINI_API_KEY:-}
+      AI__Ollama__BaseUrl: http://ollama:11434
+      Embedding__Provider: ${EMBEDDING_PROVIDER:-ollama}
+      Embedding__Ollama__Endpoint: http://ollama:11434/api/embed
+      VectorStore__SqlitePath: /app/App_Data/domaincopilot-vectors.db
+    ports:
+      - "8080:8080"
+    volumes:
+      - vector-index:/app/App_Data
+    depends_on:
+      sql-server:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+
+volumes:
+  sqlserver-data:
+  ollama-models:
+  vector-index:

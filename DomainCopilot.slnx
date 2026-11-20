@@ -6,8 +6,10 @@
     <Project Path="src/DomainCopilot.Infrastructure/DomainCopilot.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/DomainCopilot.Evaluation/DomainCopilot.Evaluation.csproj" />
     <Project Path="tests/DomainCopilot.Application.Tests/DomainCopilot.Application.Tests.csproj" />
     <Project Path="tests/DomainCopilot.ArchitectureTests/DomainCopilot.ArchitectureTests.csproj" />
     <Project Path="tests/DomainCopilot.Domain.Tests/DomainCopilot.Domain.Tests.csproj" />
+    <Project Path="tests/DomainCopilot.Infrastructure.Tests/DomainCopilot.Infrastructure.Tests.csproj" />
   </Folder>
 </Solution>

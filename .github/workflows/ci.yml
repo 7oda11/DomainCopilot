@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.404
+      - name: Restore
+        run: dotnet restore DomainCopilot.slnx
+      - name: Build
+        run: dotnet build DomainCopilot.slnx --no-restore --configuration Release
+      - name: Test
+        run: dotnet test DomainCopilot.slnx --no-build --configuration Release --logger "trx;LogFileName=tests.trx"
+      - name: Dependency vulnerability audit
+        run: dotnet list DomainCopilot.slnx package --vulnerable --include-transitive

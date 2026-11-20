@@ -11,6 +11,8 @@
 TestResults/
 coverage/
 coverage.*
+tmp/
 App_Data/
 secrets.json
 *.log
+evaluation-report.json

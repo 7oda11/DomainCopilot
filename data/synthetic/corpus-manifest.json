@@ -1,0 +1,247 @@
+{
+  "corpus": "Domain Copilot fictional workflow fixtures",
+  "documents": [
+    {
+      "fileName": "synthetic-adult-screening-v1.pdf",
+      "title": "Adult Screening Record Workflow",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "51057fa81808729d573481e87e88197018f210abb6b48891d4ed1c17600be407"
+    },
+    {
+      "fileName": "synthetic-warning-signs-v1.pdf",
+      "title": "Warning Sign Record Completeness",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "da912db87ab0f20faae99e5a9b7a219299ba92aec7c0e84347c22301864ca5e7"
+    },
+    {
+      "fileName": "synthetic-follow-up-v1.pdf",
+      "title": "Record Review Follow-up Version One",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "64af3243f209dfb66dd05ae4a2a13a37b0cceca50342c1bc128965ee40c27325"
+    },
+    {
+      "fileName": "synthetic-medication-history-v1.pdf",
+      "title": "Medication History Field Guide",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "3c9358ff47c91ae891609f94f10c1afb50d0d4cc1e5e090f7c3675e7debb9fd8"
+    },
+    {
+      "fileName": "synthetic-infection-control-v1.pdf",
+      "title": "Entry Checklist for Shared Clinical Rooms",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "b0b01489f7995636584f56f86e8126e3525a75ef0f6a058eb17a978a426cf6a5"
+    },
+    {
+      "fileName": "synthetic-allergy-documentation-v1.pdf",
+      "title": "Allergy Record Uncertainty Guide",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "07c93a3cbcf4df4d6cd8f6a1f4e198b22bca753a683eaf1e37c7d8e4c325368a"
+    },
+    {
+      "fileName": "synthetic-escalation-pathway-v1.pdf",
+      "title": "Administrative Escalation Handoff",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "4c77efaad0fa5e98885af12596e6ccf383ba52521668995d29cd62182d25481e"
+    },
+    {
+      "fileName": "synthetic-handover-standard-v1.pdf",
+      "title": "Handover Record Structure",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "fa8c203bf2fc1f0da25b3e3cac1b51f5d83c9b307a6f05c7077bb0b9fbc58e20"
+    },
+    {
+      "fileName": "synthetic-consent-policy-v1.pdf",
+      "title": "Consent Decision Record Template",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "9e029fc9f7104175fe38a7b87001f609154cbf80cee84575ce317d37e3a709a0"
+    },
+    {
+      "fileName": "synthetic-adverse-event-v1.pdf",
+      "title": "Event Reporting Queue Guide",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "45b97d62f11f5cb3a54c0501ef5cfd5f24b19d4518ba7cc0d68a681aedb23dc1"
+    },
+    {
+      "fileName": "synthetic-respiratory-checklist-v1.pdf",
+      "title": "Respiratory Observation Record Fields",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "2fa0f4881f0d4f7539c13498262f1e04d1b9e81b6dd768c91f307ec4a2da2e97"
+    },
+    {
+      "fileName": "synthetic-identity-check-v1.pdf",
+      "title": "Procedure Record Identity Fields",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "734c2d1df967fb4c0e4f3ca51fdd9766cd9090df7df03c4ca5669ccfc6e39b37"
+    },
+    {
+      "fileName": "synthetic-records-policy-v1.pdf",
+      "title": "Unavailable Records Documentation Rule",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "8dfa4600cc1549b75aa767d5f679d73de1cfa6c4aeaf9d87a0fab57198d252d2"
+    },
+    {
+      "fileName": "synthetic-note-review-v1.pdf",
+      "title": "Draft Clinical Note Review Workflow",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "f4220ac6063b7023077c31990a639a4471eb4370ebe220633498c0eac185be61"
+    },
+    {
+      "fileName": "synthetic-specimen-handling-v1.pdf",
+      "title": "Specimen Record Tracking Fields",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "9e24e36b5ceb209594015498ba95b52cbad8831b4d4bf4f7fab5a191b3fd8289"
+    },
+    {
+      "fileName": "synthetic-discharge-checklist-v1.pdf",
+      "title": "Discharge Documentation Checklist",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "5f59eecc42ba73318c2231221483835ebda422b936d2146dbe34d69e45f67d29"
+    },
+    {
+      "fileName": "synthetic-follow-up-v2.pdf",
+      "title": "Record Review Follow-up Version Two",
+      "version": "v2",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "0177fd3a6bf81e2bdbff91921ad7ac11479decdf00002d1bdbcf15a615906a55"
+    },
+    {
+      "fileName": "synthetic-referral-tracking-v1.pdf",
+      "title": "Referral Record Tracking Fields",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "0a4c25623c5497fc0b54c7ec8fc83032e165b07ec6b0adae225af07a846f0a29"
+    },
+    {
+      "fileName": "synthetic-privacy-minimum-v1.pdf",
+      "title": "Assessment Data Minimization Rules",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "d666bb8e983f902decff2200a0af4e4395e06c9d1f2e9439db0aa96ae8f268a7"
+    },
+    {
+      "fileName": "synthetic-equipment-log-v1.pdf",
+      "title": "Equipment Record Maintenance Log",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "f15a176bb20f6820e6a0a8b8974ff2cd0da7669b711ff6fca0604fa6e913fe59"
+    },
+    {
+      "fileName": "synthetic-incident-review-v1.pdf",
+      "title": "Incident Review Queue Fields",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "779eb78bf81a950a703584c97cfcb3dbc3208b73b224ade4c8934f2ed5183975"
+    },
+    {
+      "fileName": "synthetic-accessible-communication-v1.pdf",
+      "title": "Communication Preference Record",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "a02acf1cf5325dcca7720ce2cbabdfa289f7a7cd315dc95bbf138c0ba6336818"
+    },
+    {
+      "fileName": "synthetic-downtime-procedure-v1.pdf",
+      "title": "Application Downtime Record Procedure",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "1ed2bcd672e84041dbae9fe515378b248fcbff6bd720741111918772c82e5bf0"
+    },
+    {
+      "fileName": "synthetic-audit-trail-v1.pdf",
+      "title": "Audit Trail Event Structure",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "91c3fc263a2e767b047c7fc88e135977cd00336ed9a027f97e17bb147dee8c63"
+    },
+    {
+      "fileName": "synthetic-appointment-coordination-v1.pdf",
+      "title": "Appointment Coordination Record",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "7e3bcada10ba720f305244d9007e3456e8600f5e7c62fae5230758ee11cc2404"
+    },
+    {
+      "fileName": "synthetic-document-versioning-v1.pdf",
+      "title": "Document Version Control Register",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "0e5794f7e0c24fea432764e706f188c65fa55ecbea81dde576a0455bdff57550"
+    },
+    {
+      "fileName": "synthetic-quality-review-v1.pdf",
+      "title": "Quality Review Sampling Record",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "fd8df793161a1088a7c4b3e9209e30baa3800fc6ec45b5ff665d9fa9563eaef0"
+    },
+    {
+      "fileName": "synthetic-training-acknowledgement-v1.pdf",
+      "title": "Training Acknowledgement Record",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "ae7bfd5f89102e7e01b2b4b968b55fb3662c526dd09c23d4e380842bab43ad79"
+    },
+    {
+      "fileName": "synthetic-data-correction-v1.pdf",
+      "title": "Source Data Correction Request",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "5c26f3c34985dc8ed513708f478a9c2a6dff201be20e1e0fb2561812c3afafa4"
+    },
+    {
+      "fileName": "synthetic-retention-schedule-v1.pdf",
+      "title": "Assessment Artifact Retention Schedule",
+      "version": "v1",
+      "expectedPages": 5,
+      "synthetic": true,
+      "sha256": "e4d91fb136ff5618b55130e1690830887fe12025e6faced4370ab50698c39682"
+    }
+  ],
+  "documentCount": 30,
+  "expectedPageCount": 150
+}

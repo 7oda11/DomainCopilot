@@ -5,12 +5,16 @@ namespace DomainCopilot.Domain.Evidence;
 
 public sealed class EvidenceCitation
 {
-    public Guid DocumentId { get; }
-    public Guid ChunkId { get; }
-    public string SourceVersion { get; }
-    public string? Section { get; }
-    public int? PageNumber { get; }
-    public string QuotedText { get; }
+    public Guid DocumentId { get; private set; }
+    public Guid ChunkId { get; private set; }
+    public string SourceVersion { get; private set; } = string.Empty;
+    public string? Section { get; private set; }
+    public int? PageNumber { get; private set; }
+    public string QuotedText { get; private set; } = string.Empty;
+
+    private EvidenceCitation()
+    {
+    }
 
     public EvidenceCitation(DocumentChunk chunk, string quotedText)
     {
