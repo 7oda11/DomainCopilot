@@ -2,10 +2,12 @@ using DomainCopilot.Api.Contracts.Documents;
 using DomainCopilot.Application.Features.Ingestion;
 using DomainCopilot.Domain.Documents;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DomainCopilot.Api.Controllers;
 
 [ApiController]
+[Authorize(Policy = "ClinicalStaff")]
 [Route("api/documents")]
 public sealed class DocumentsController(IngestDocumentHandler ingestDocument) : ControllerBase
 {

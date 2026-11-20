@@ -1,10 +1,12 @@
 using DomainCopilot.Api.Contracts.Retrieval;
 using DomainCopilot.Application.Features.Retrieval;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DomainCopilot.Api.Controllers;
 
 [ApiController]
+[Authorize(Policy = "ClinicalStaff")]
 [Route("api/search")]
 public sealed class SearchController(HybridSearchHandler searchHandler) : ControllerBase
 {
