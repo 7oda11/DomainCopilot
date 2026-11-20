@@ -117,7 +117,7 @@ Statuses below are planning statuses, not claims that a feature exists.
 | FR-8 authentication and at least two server-enforced roles | Planned | Authorization tests, Phase 11 |
 | FR-9 correlation, token/cost data, traces, health/readiness | Planned | Observability tests, Phase 9, 11 |
 | Clean Architecture and provider/storage abstractions | Partial: project boundaries, automated dependency checks, repository and Unit of Work ports exist; provider and persistence adapters remain | `DomainCopilot.slnx`, `LayerDependencyTests.cs`, `Application/Abstractions/Persistence`; Phases 5, 8 |
-| Relational store, vector store and migrations | Planned | ADR and migration/integration checks, Phase 5 |
+| Relational store, vector store and migrations | Partial: SQL Server EF migrations applied to a clean LocalDB database; SQLite vector index covered by infrastructure tests; corpus has not yet been indexed | `docs/LOCAL-DEMO.md`, `tests/DomainCopilot.Infrastructure.Tests/SqliteVectorIndexTests.cs`; live embeddings/indexing remains |
 | Tests: unit, integration and contract | Partial: domain, application and architecture tests exist; integration/contract tests and CI remain | `tests/DomainCopilot.Domain.Tests`, `tests/DomainCopilot.Application.Tests`, `tests/DomainCopilot.ArchitectureTests`; Phases 5–13 |
 | Docker Compose, seed command, `.env.example` | Planned | Clean-start verification, Phase 13 |
 | OWASP controls and `docs/SECURITY.md` | Planned | Threat/control mapping and security tests, Phase 11–13 |
