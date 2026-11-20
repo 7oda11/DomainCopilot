@@ -35,11 +35,11 @@ The token is sent only as an Authorization header and is not included in the rep
 
 ## Baseline status
 
-No actual baseline is published yet. The repository does not currently ship the required 30-document / 150-page synthetic or public corpus, and a live SQL Server plus embedding provider and authenticated API were unavailable during this phase. Dataset validation is not a retrieval baseline. Record the first real run here, including zeroes and failures, only after the corpus and runtime are ready.
+No actual retrieval baseline is published yet. The repository now ships a deterministic 30-document / 150-page synthetic corpus, and the Windows LocalDB schema plus API SQL readiness have been verified. The corpus has not been indexed: Ollama and its models are not installed, no Gemini embedding key is configured, and no test identity-provider token is available for the protected search endpoint. Dataset validation and database readiness are not a retrieval baseline. Record the first real run here, including zeroes and failures, only after the corpus is indexed and the authenticated API can be exercised.
 
 ## Known evaluation gaps
 
-- Source names and support terms are expected labels for the planned synthetic corpus; align them with the final corpus before treating the run as a baseline.
+- Source names and support terms are aligned with the bundled synthetic corpus; rerun the dataset validator after editing either one.
 - Groundedness checks exact support-term presence in citation text, which can miss paraphrases and can reward keyword overlap without proving entailment.
 - No answer-generation route is measured, so no answer-level claim/citation entailment score exists.
 - The indirect-injection case needs an indexed malicious document and a workflow-level assertion that the malicious instruction did not alter tool permissions or draft content.
