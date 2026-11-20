@@ -14,3 +14,4 @@ coverage.*
 App_Data/
 secrets.json
 *.log
+evaluation-report.json

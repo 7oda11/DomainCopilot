@@ -21,7 +21,7 @@ DomainCopilot.Api -> DomainCopilot.Application -> DomainCopilot.Domain
 
 The API requires a JWT identity provider configured through `Authentication__Authority` and `Authentication__Audience`. For local startup set these in the environment; the placeholder in `appsettings.json` intentionally does not point to a real tenant.
 
-Chat-provider adapters, Gemini-to-Ollama failover, three agent stages, tool allow-lists, an approval queue and JWT-protected API are implemented. The assessment corpus floor, evaluation harness, a disconnected end-to-end run, durable per-agent traces and an actual EHR integration remain incomplete. Read the [local demo guide](docs/LOCAL-DEMO.md), [security notes](docs/SECURITY.md), [ingestion guide](docs/INGESTION.md), [retrieval strategy](docs/RETRIEVAL.md) and [provider setup](docs/PROVIDERS.md) before running locally.
+Chat-provider adapters, Gemini-to-Ollama failover, three agent stages, tool allow-lists, an approval queue, a JWT-protected API and an API-based evaluation harness are implemented. The assessment corpus floor and real evaluation baseline, a disconnected end-to-end run, durable per-agent traces and an actual EHR integration remain incomplete. Read the [local demo guide](docs/LOCAL-DEMO.md), [evaluation methodology](docs/EVALUATION.md), [security notes](docs/SECURITY.md), [ingestion guide](docs/INGESTION.md), [retrieval strategy](docs/RETRIEVAL.md) and [provider setup](docs/PROVIDERS.md) before running locally.
 
 ## Prerequisites
 
