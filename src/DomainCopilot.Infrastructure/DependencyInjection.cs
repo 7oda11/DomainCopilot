@@ -5,6 +5,10 @@ using DomainCopilot.Application.Abstractions.Retrieval;
 using DomainCopilot.Application.Abstractions.AI;
 using DomainCopilot.Application.AI;
 using DomainCopilot.Application.Features.Retrieval;
+using DomainCopilot.Application.Features.Agents;
+using DomainCopilot.Application.Features.Workflow;
+using DomainCopilot.Application.Features.Approval;
+using DomainCopilot.Application.Security;
 using DomainCopilot.Infrastructure.AI;
 using DomainCopilot.Infrastructure.Documents;
 using DomainCopilot.Infrastructure.Persistence;
@@ -13,6 +17,7 @@ using DomainCopilot.Infrastructure.VectorStore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace DomainCopilot.Infrastructure;
 
@@ -29,6 +34,8 @@ public static class DependencyInjection
         }
 
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddSingleton<TimeProvider>(TimeProvider.System);
+        services.AddSingleton<PiiRedactor>();
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<AppDbContext>());
         services.AddScoped<IDocumentIngestionStore, EfDocumentIngestionStore>();
@@ -67,6 +74,16 @@ public static class DependencyInjection
         services.AddSingleton<DocumentChunker>();
         services.AddScoped<IngestDocumentHandler>();
         services.AddScoped<HybridSearchHandler>();
+        services.AddScoped<GuidelineResearcherAgent>();
+        services.AddScoped<DocumentationDrafterAgent>();
+        services.AddScoped<SafetyCheckerAgent>();
+        services.AddScoped<RunCopilotWorkflowHandler>();
+        services.AddScoped<ReviewClinicalDraftHandler>();
+        services.AddSingleton<AgentToolCatalog>();
+        services.AddScoped<SearchGuidelinesTool>();
+        services.AddScoped<ReadClinicalCaseTool>();
+        services.AddScoped<ValidateCitationsTool>();
+        services.AddScoped<QueueClinicalDraftTool>();
 
         return services;
     }

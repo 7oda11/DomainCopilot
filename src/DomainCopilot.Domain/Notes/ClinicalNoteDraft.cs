@@ -1,15 +1,22 @@
 using DomainCopilot.Domain.Errors;
 using DomainCopilot.Domain.Evidence;
+using DomainCopilot.Domain;
 
 namespace DomainCopilot.Domain.Notes;
 
-public sealed class ClinicalNoteDraft
+public sealed class ClinicalNoteDraft : IAggregateRoot
 {
-    public Guid Id { get; }
-    public Guid RunId { get; }
-    public string Content { get; }
-    public IReadOnlyList<EvidenceCitation> Citations { get; }
-    public DateTimeOffset CreatedAtUtc { get; }
+    private readonly List<EvidenceCitation> _citations = [];
+
+    public Guid Id { get; private set; }
+    public Guid RunId { get; private set; }
+    public string Content { get; private set; } = string.Empty;
+    public IReadOnlyList<EvidenceCitation> Citations => _citations.AsReadOnly();
+    public DateTimeOffset CreatedAtUtc { get; private set; }
+
+    private ClinicalNoteDraft()
+    {
+    }
 
     public ClinicalNoteDraft(
         Guid id,
@@ -48,7 +55,7 @@ public sealed class ClinicalNoteDraft
         Id = id;
         RunId = runId;
         Content = content.Trim();
-        Citations = Array.AsReadOnly(citationList);
+        _citations.AddRange(citationList);
         CreatedAtUtc = createdAtUtc;
     }
 }

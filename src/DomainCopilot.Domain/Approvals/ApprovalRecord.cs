@@ -1,16 +1,21 @@
 using DomainCopilot.Domain.Errors;
+using DomainCopilot.Domain;
 
 namespace DomainCopilot.Domain.Approvals;
 
-public sealed class ApprovalRecord
+public sealed class ApprovalRecord : IAggregateRoot
 {
-    public Guid Id { get; }
-    public Guid DraftId { get; }
-    public string ReviewerId { get; }
-    public ApprovalAction Action { get; }
-    public string? Comment { get; }
-    public string? ApprovedContent { get; }
-    public DateTimeOffset DecidedAtUtc { get; }
+    public Guid Id { get; private set; }
+    public Guid DraftId { get; private set; }
+    public string ReviewerId { get; private set; } = string.Empty;
+    public ApprovalAction Action { get; private set; }
+    public string? Comment { get; private set; }
+    public string? ApprovedContent { get; private set; }
+    public DateTimeOffset DecidedAtUtc { get; private set; }
+
+    private ApprovalRecord()
+    {
+    }
 
     public ApprovalRecord(
         Guid id,

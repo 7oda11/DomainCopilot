@@ -1,6 +1,8 @@
 using DomainCopilot.Domain.Cases;
 using DomainCopilot.Domain.Documents;
 using DomainCopilot.Domain.Workflows;
+using DomainCopilot.Domain.Notes;
+using DomainCopilot.Domain.Approvals;
 using DomainCopilot.Application.Abstractions.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<SourceDocument> SourceDocuments => Set<SourceDocument>();
     public DbSet<DocumentChunk> DocumentChunks => Set<DocumentChunk>();
     public DbSet<CopilotRun> CopilotRuns => Set<CopilotRun>();
+    public DbSet<ClinicalNoteDraft> ClinicalNoteDrafts => Set<ClinicalNoteDraft>();
+    public DbSet<ApprovalRecord> ApprovalRecords => Set<ApprovalRecord>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

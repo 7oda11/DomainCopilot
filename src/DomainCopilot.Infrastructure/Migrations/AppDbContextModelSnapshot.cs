@@ -22,6 +22,44 @@ namespace DomainCopilot.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DomainCopilot.Domain.Approvals.ApprovalRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("ApprovedContent")
+                        .HasMaxLength(12000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTimeOffset>("DecidedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("DraftId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReviewerId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DraftId")
+                        .IsUnique();
+
+                    b.ToTable("ApprovalRecords", (string)null);
+                });
+
             modelBuilder.Entity("DomainCopilot.Domain.Cases.ClinicalCase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -124,6 +162,31 @@ namespace DomainCopilot.Infrastructure.Migrations
                     b.ToTable("SourceDocuments", (string)null);
                 });
 
+            modelBuilder.Entity("DomainCopilot.Domain.Notes.ClinicalNoteDraft", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(12000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RunId")
+                        .IsUnique();
+
+                    b.ToTable("ClinicalNoteDrafts", (string)null);
+                });
+
             modelBuilder.Entity("DomainCopilot.Domain.Workflows.CopilotRun", b =>
                 {
                     b.Property<Guid>("Id")
@@ -158,6 +221,15 @@ namespace DomainCopilot.Infrastructure.Migrations
                     b.ToTable("CopilotRuns", (string)null);
                 });
 
+            modelBuilder.Entity("DomainCopilot.Domain.Approvals.ApprovalRecord", b =>
+                {
+                    b.HasOne("DomainCopilot.Domain.Notes.ClinicalNoteDraft", null)
+                        .WithMany()
+                        .HasForeignKey("DraftId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("DomainCopilot.Domain.Documents.DocumentChunk", b =>
                 {
                     b.HasOne("DomainCopilot.Domain.Documents.SourceDocument", null)
@@ -165,6 +237,59 @@ namespace DomainCopilot.Infrastructure.Migrations
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DomainCopilot.Domain.Notes.ClinicalNoteDraft", b =>
+                {
+                    b.HasOne("DomainCopilot.Domain.Workflows.CopilotRun", null)
+                        .WithMany()
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsMany("DomainCopilot.Domain.Evidence.EvidenceCitation", "Citations", b1 =>
+                        {
+                            b1.Property<Guid>("DraftId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Ordinal")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Ordinal"));
+
+                            b1.Property<Guid>("ChunkId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("DocumentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int?>("PageNumber")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("QuotedText")
+                                .IsRequired()
+                                .HasMaxLength(12000)
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Section")
+                                .HasMaxLength(500)
+                                .HasColumnType("nvarchar(500)");
+
+                            b1.Property<string>("SourceVersion")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
+
+                            b1.HasKey("DraftId", "Ordinal");
+
+                            b1.ToTable("ClinicalNoteCitations", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("DraftId");
+                        });
+
+                    b.Navigation("Citations");
                 });
 
             modelBuilder.Entity("DomainCopilot.Domain.Workflows.CopilotRun", b =>
