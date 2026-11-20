@@ -1,4 +1,7 @@
 using DomainCopilot.Application.Abstractions.Persistence;
+using DomainCopilot.Application.Abstractions.Documents;
+using DomainCopilot.Application.Features.Ingestion;
+using DomainCopilot.Infrastructure.Documents;
 using DomainCopilot.Infrastructure.Persistence;
 using DomainCopilot.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +25,11 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<AppDbContext>());
+        services.AddScoped<IDocumentIngestionStore, EfDocumentIngestionStore>();
+        services.AddScoped<IDocumentTextExtractor, PdfPigTextExtractor>();
+        services.AddScoped<IDocumentTextExtractor, OpenXmlDocxTextExtractor>();
+        services.AddSingleton<DocumentChunker>();
+        services.AddScoped<IngestDocumentHandler>();
 
         return services;
     }

@@ -6,6 +6,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="PdfPig" Version="0.1.12" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.21" />
     <ProjectReference Include="..\DomainCopilot.Application\DomainCopilot.Application.csproj" />
     <ProjectReference Include="..\DomainCopilot.Domain\DomainCopilot.Domain.csproj" />
   </ItemGroup>
