@@ -106,7 +106,7 @@ Statuses below are planning statuses, not claims that a feature exists.
 |---|---|---|
 | D0 healthcare agents and clinician approval | Partial: case/run/note/decision domain model and approval lifecycle rules exist; agents and review API are pending | `src/DomainCopilot.Domain/Workflows`, `Approvals`, `Notes`; Domain unit tests; agent/API work remains Phase 9–11 |
 | T2 hosted/local automatic fallback and offline operation | Planned | Provider ADR, integration tests, Phase 8 |
-| ≥30 documents / ≥150 pages / synthetic or public only | Planned | Seed corpus manifest and ingestion evidence, Phase 6 |
+| ≥30 documents / ≥150 pages / synthetic or public only | Partial: the included synthetic corpus has 30 PDFs and 150 extractable pages; runtime ingestion has not been verified | `data/synthetic/corpus-manifest.json`, `docs/INGESTION.md`; Phase 6 live SQL Server/Ollama verification remains |
 | FR-1 ingestion stages, metadata, idempotency, status | Partial: source fingerprint, format, version and processing states are modelled; extract/clean/chunk/embed/index adapters remain | `Documents/SourceDocument.cs`; pipeline/API work remains Phase 6 |
 | FR-2 hybrid retrieval, enhancement, citations, refusal | Partial: chunks preserve page/section/version and citations verify quoted text belongs to the cited chunk; retrieval/fusion/refusal use case remains | `Documents/DocumentChunk.cs`, `Evidence/EvidenceCitation.cs`; retrieval ADR and evaluation remain Phase 7 |
 | FR-3 ≥25 golden cases, adversarial/injection, runnable metrics | Planned | Harness and report, Phase 12 |

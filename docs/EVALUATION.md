@@ -2,7 +2,7 @@
 
 ## Scope
 
-`tests/DomainCopilot.Evaluation/evaluation-cases.json` contains 25 synthetic healthcare scenarios: 16 in-corpus retrieval cases and 9 adversarial cases, including three prompt-injection probes. It contains no real patient data. Positive cases name the expected synthetic source document and the terms that should be supported by at least one returned citation.
+`tests/DomainCopilot.Evaluation/evaluation-cases.json` contains 25 synthetic healthcare question/answer pairs: 16 in-corpus retrieval cases and 9 adversarial cases, including three prompt-injection probes. It contains no real patient data. Positive cases name the expected synthetic source document and the terms that should be supported by at least one returned citation.
 
 The harness calls the same authenticated `POST /api/search` endpoint used by the application. It does not replace the API's embedding, SQL keyword search, vector search, or reciprocal-rank-fusion path with a test double.
 

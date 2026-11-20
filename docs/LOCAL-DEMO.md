@@ -17,7 +17,7 @@
 ## Demo sequence
 
 1. `POST /api/cases` with `{ "syntheticCaseSummary": "Synthetic test scenario only" }` as a `Clinician`.
-2. `POST /api/documents` with multipart `File` and `Version`, using a public or synthetic PDF/DOCX guideline.
+2. Set a valid role token as `DOMAINCOPILOT_BEARER_TOKEN` and run `./scripts/ingest-synthetic-corpus.ps1` to index the included 30-document synthetic corpus, or upload one public/synthetic PDF or DOCX through `POST /api/documents`.
 3. `POST /api/copilot/drafts` with the returned `caseId` and a question.
 4. Inspect returned evidence and progress; only a successful safety review returns `AwaitingApproval` and `draftId`.
 5. `POST /api/drafts/{draftId}/review` with an approve, reject, or edited-and-approved action as a `Clinician`.
@@ -26,4 +26,4 @@ For a local-only model run set `AI_PRIMARY_PROVIDER=ollama` in `.env`, keep `EMB
 
 ## Boundaries
 
-The current source corpus is not bundled: no real medical patient content is included. The assessment floor of 30 documents and 150 pages, OCR, measured retrieval/groundedness/refusal evaluation, persistent agent traces, full local identity-provider fixture, and production EHR publishing remain open tasks. Do not use this MVP for patient care.
+The 30-document / 150-page synthetic corpus is bundled, and its files were checked for page count and extractable text. Live ingestion into SQL Server and Ollama has not yet been verified. OCR, a measured retrieval baseline, answer-level groundedness, persistent agent traces, a full local identity-provider fixture and production EHR publishing remain open tasks. No real medical data is included. Do not use this MVP for patient care.

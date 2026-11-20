@@ -21,7 +21,11 @@ DomainCopilot.Api -> DomainCopilot.Application -> DomainCopilot.Domain
 
 The API requires a JWT identity provider configured through `Authentication__Authority` and `Authentication__Audience`. For local startup set these in the environment; the placeholder in `appsettings.json` intentionally does not point to a real tenant.
 
-Chat-provider adapters, Gemini-to-Ollama failover, three agent stages, tool allow-lists, an approval queue, a JWT-protected API and an API-based evaluation harness are implemented. The assessment corpus floor and real evaluation baseline, a disconnected end-to-end run, durable per-agent traces and an actual EHR integration remain incomplete. Read the [local demo guide](docs/LOCAL-DEMO.md), [evaluation methodology](docs/EVALUATION.md), [security notes](docs/SECURITY.md), [ingestion guide](docs/INGESTION.md), [retrieval strategy](docs/RETRIEVAL.md) and [provider setup](docs/PROVIDERS.md) before running locally.
+## Synthetic assessment corpus
+
+The repository includes 30 generated, fictional workflow PDFs with five explicit pages each (150 pages total). Regenerate them with `python scripts/generate_synthetic_corpus.py` (requires `reportlab`); the script writes a SHA-256 manifest. To index them, start the API and SQL Server, then set `DOMAINCOPILOT_API_URL` and `DOMAINCOPILOT_BEARER_TOKEN` and run `./scripts/ingest-synthetic-corpus.ps1` in PowerShell 7. No real patient data is included. These documents are engineering fixtures, not clinical guidance.
+
+Chat-provider adapters, Gemini-to-Ollama failover, three agent stages, tool allow-lists, an approval queue, a JWT-protected API and an API-based evaluation harness are implemented. The corpus assets meet the 30-document/150-page count, but live corpus indexing and the actual evaluation baseline are unverified. A disconnected end-to-end run, durable per-agent traces and an actual EHR integration also remain incomplete. Read the [local demo guide](docs/LOCAL-DEMO.md), [evaluation methodology](docs/EVALUATION.md), [security notes](docs/SECURITY.md), [ingestion guide](docs/INGESTION.md), [retrieval strategy](docs/RETRIEVAL.md) and [provider setup](docs/PROVIDERS.md) before running locally.
 
 ## Prerequisites
 

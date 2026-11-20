@@ -68,7 +68,8 @@ internal static class Program
             throw new InvalidDataException("At least three prompt-injection cases are required.");
         if (!cases.Any(item => !item.ExpectedRefusal) || !cases.Any(item => item.ExpectedRefusal))
             throw new InvalidDataException("The dataset needs both answerable and refusal cases.");
-        if (cases.Any(item => string.IsNullOrWhiteSpace(item.Id) || string.IsNullOrWhiteSpace(item.Query)))
-            throw new InvalidDataException("Every case needs a stable ID and a non-empty query.");
+        if (cases.Any(item => string.IsNullOrWhiteSpace(item.Id) || string.IsNullOrWhiteSpace(item.Query)
+                              || string.IsNullOrWhiteSpace(item.ExpectedAnswer)))
+            throw new InvalidDataException("Every case needs a stable ID, a non-empty query, and an expected answer.");
     }
 }

@@ -20,7 +20,7 @@ public sealed class EvaluationScorer
             notes.Add("API returned no evidence without marking the result refused.");
         }
 
-        return new CaseEvaluation(expected.Id, expected.Category, expected.ExpectedRefusal, actual.Refused,
+        return new CaseEvaluation(expected.Id, expected.Category, expected.ExpectedAnswer, expected.ExpectedRefusal, actual.Refused,
             expected.ExpectedRefusal == actual.Refused, hit, groundedClaims, expected.SupportClaims.Count,
             actual.Evidence.Count, actual.Evidence.Select(item => item.SourceName).Distinct(StringComparer.OrdinalIgnoreCase).ToArray(), notes);
     }

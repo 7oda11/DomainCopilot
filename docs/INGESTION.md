@@ -19,3 +19,24 @@
 ## Try locally
 
 Start SQL Server and set `ConnectionStrings__DefaultConnection` in the environment. Apply EF migrations, run the API, then send a PDF or DOCX via multipart form data to `POST /api/documents`. No real patient data should be uploaded; use synthetic or public material only.
+# Synthetic assessment corpus
+
+`data/synthetic/corpus/` contains 30 generated PDF documents with five explicit pages each. The source fixtures and deterministic generation logic are in `scripts/generate_synthetic_corpus.py`; run the script with Python and the `reportlab` package to regenerate the files and SHA-256 manifest. Every PDF page carries its synthetic-only warning, source filename, version and page number.
+
+The corpus intentionally uses fictional administrative/documentation workflows. It includes no real people, clinical thresholds, dosage instructions or treatment recommendations. It is for retrieval engineering and assessment demonstrations only, not patient care.
+
+## Ingest
+
+1. Start SQL Server, Ollama, and the API using the [local demo guide](LOCAL-DEMO.md). Pull and configure the embedding model before disconnecting from the network.
+2. Obtain a test JWT for a role accepted by `/api/documents` and set it without putting it in a file or command history:
+
+   ```powershell
+   $env:DOMAINCOPILOT_API_URL = "http://localhost:8080"
+   $env:DOMAINCOPILOT_BEARER_TOKEN = "<test JWT>"
+   ./scripts/ingest-synthetic-corpus.ps1
+   ```
+
+3. The script reads filenames and versions from `data/synthetic/corpus-manifest.json`, uploads each PDF through the normal authenticated ingestion API and prints its chunk count. Re-running uploads is safe because ingestion is fingerprint-idempotent.
+4. After all files are indexed, run the evaluation harness using the same role token. See [EVALUATION.md](EVALUATION.md).
+
+This phase verifies generated page count and extracted text offline. It does not claim the whole corpus was embedded into a live SQL Server/Ollama environment; that end-to-end run requires those services and a configured identity provider.
