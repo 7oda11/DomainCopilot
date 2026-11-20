@@ -9,5 +9,6 @@
     <Project Path="tests/DomainCopilot.Application.Tests/DomainCopilot.Application.Tests.csproj" />
     <Project Path="tests/DomainCopilot.ArchitectureTests/DomainCopilot.ArchitectureTests.csproj" />
     <Project Path="tests/DomainCopilot.Domain.Tests/DomainCopilot.Domain.Tests.csproj" />
+    <Project Path="tests/DomainCopilot.Infrastructure.Tests/DomainCopilot.Infrastructure.Tests.csproj" />
   </Folder>
 </Solution>

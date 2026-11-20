@@ -8,13 +8,17 @@ namespace DomainCopilot.Domain.Workflows;
 
 public sealed class CopilotRun : IAggregateRoot
 {
-    public Guid Id { get; }
-    public Guid CaseId { get; }
+    public Guid Id { get; private set; }
+    public Guid CaseId { get; private set; }
     public CopilotRunStatus Status { get; private set; }
     public Guid? DraftId { get; private set; }
     public string? FailureReason { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; }
     public DateTimeOffset? CompletedAtUtc { get; private set; }
+
+    private CopilotRun()
+    {
+    }
 
     public CopilotRun(Guid id, ClinicalCase clinicalCase, DateTimeOffset createdAtUtc)
     {

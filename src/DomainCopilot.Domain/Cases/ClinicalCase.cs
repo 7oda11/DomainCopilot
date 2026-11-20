@@ -5,9 +5,13 @@ namespace DomainCopilot.Domain.Cases;
 
 public sealed class ClinicalCase : IAggregateRoot
 {
-    public Guid Id { get; }
-    public string CaseSummary { get; }
-    public DateTimeOffset CreatedAtUtc { get; }
+    public Guid Id { get; private set; }
+    public string CaseSummary { get; private set; } = string.Empty;
+    public DateTimeOffset CreatedAtUtc { get; private set; }
+
+    private ClinicalCase()
+    {
+    }
 
     public ClinicalCase(Guid id, string caseSummary, DateTimeOffset createdAtUtc)
     {

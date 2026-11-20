@@ -5,14 +5,18 @@ namespace DomainCopilot.Domain.Documents;
 
 public sealed class SourceDocument : IAggregateRoot
 {
-    public Guid Id { get; }
-    public string SourceName { get; }
-    public DocumentFormat Format { get; }
-    public string Version { get; }
-    public string ContentSha256 { get; }
-    public DateTimeOffset CreatedAtUtc { get; }
+    public Guid Id { get; private set; }
+    public string SourceName { get; private set; } = string.Empty;
+    public DocumentFormat Format { get; private set; }
+    public string Version { get; private set; } = string.Empty;
+    public string ContentSha256 { get; private set; } = string.Empty;
+    public DateTimeOffset CreatedAtUtc { get; private set; }
     public DocumentProcessingStatus Status { get; private set; }
     public string? FailureReason { get; private set; }
+
+    private SourceDocument()
+    {
+    }
 
     public SourceDocument(
         Guid id,
