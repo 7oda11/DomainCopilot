@@ -35,7 +35,17 @@ The token is sent only as an Authorization header and is not included in the rep
 
 ## Baseline status
 
-No actual retrieval baseline is published yet. The repository now ships a deterministic 30-document / 150-page synthetic corpus, and the Windows LocalDB schema plus API SQL readiness have been verified. The corpus has not been indexed: Ollama and its models are not installed, no Gemini embedding key is configured, and no test identity-provider token is available for the protected search endpoint. Dataset validation and database readiness are not a retrieval baseline. Record the first real run here, including zeroes and failures, only after the corpus is indexed and the authenticated API can be exercised.
+First live retrieval baseline recorded at `2026-11-20T23:15:05Z` against the authenticated API, after indexing all 30 synthetic PDFs (150 pages; 150 chunks) into SQL Server LocalDB and the SQLite vector index. Embeddings came from local `nomic-embed-text` (768 dimensions). A temporary loopback-only test JWT issuer provided the `Clinician` token; no token or signing key is stored in this repository. The detailed per-case output is in [`reports/retrieval-baseline-2026-11-21.json`](reports/retrieval-baseline-2026-11-21.json).
+
+| Metric | Result | Interpretation |
+|---|---:|---|
+| Retrieval hit rate | 100% (18/18 answerable cases) | Every expected source was returned. |
+| Groundedness proxy | 100% (18/18 labeled claims) | Expected support terms appeared in cited quotes; this is lexical matching. |
+| Search refusal flag agreement | 72% (18/25 cases) | Seven expected-refusal cases returned evidence and were marked not refused: H017, H018, H021, H022, H023, H024 and H025. |
+
+The refusal metric reads the retrieval endpoint's `Refused` flag. It does not measure a generated answer or prove the agent refused unsupported requests. The current endpoint returns evidence only, so the seven misses show that retrieval returned candidates for out-of-corpus and injection queries; they do not show that an LLM gave an unsafe answer. The three prompt-injection cases remain probes only and do not verify workflow resistance.
+
+After this retrieval run, a separate synthetic draft smoke test exercised the local Qwen chat model through the API. All three agent stages completed with five citations, and the draft reached `AwaitingApproval` with clinician approval required. The temporary JWT issuer was loopback-only. Internet access remained available during this smoke test, so it is not proof of disconnected operation.
 
 ## Known evaluation gaps
 
@@ -44,3 +54,4 @@ No actual retrieval baseline is published yet. The repository now ships a determ
 - No answer-generation route is measured, so no answer-level claim/citation entailment score exists.
 - The indirect-injection case needs an indexed malicious document and a workflow-level assertion that the malicious instruction did not alter tool permissions or draft content.
 - Per-request token/cost accounting and persistent agent trace metrics remain part of the broader observability work.
+- The retrieval baseline measures search only; it does not include the separate local Qwen workflow smoke test described above.

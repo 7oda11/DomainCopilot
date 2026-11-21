@@ -17,6 +17,7 @@ public sealed class OllamaChatCompletionProvider(IHttpClientFactory clients, ICo
             $"{_baseUrl}/api/chat", new
             {
                 model = _model,
+                think = false,
                 messages = new[]
                 {
                     new { role = "system", content = request.SystemPrompt },

@@ -39,4 +39,4 @@ The corpus intentionally uses fictional administrative/documentation workflows. 
 3. The script reads filenames and versions from `data/synthetic/corpus-manifest.json`, uploads each PDF through the normal authenticated ingestion API and prints its chunk count. Re-running uploads is safe because ingestion is fingerprint-idempotent.
 4. After all files are indexed, run the evaluation harness using the same role token. See [EVALUATION.md](EVALUATION.md).
 
-This phase verifies generated page count and extracted text offline. It does not claim the whole corpus was embedded into a live SQL Server/Ollama environment; that end-to-end run requires those services and a configured identity provider.
+The 30 bundled PDFs have been uploaded through the authenticated API and indexed into SQL Server LocalDB and SQLite with Ollama Nomic embeddings. The live baseline and its limits are recorded in [EVALUATION.md](EVALUATION.md). The temporary JWT issuer used for this verification was bound to loopback and was not added to the repository. Reproduce the run with a real development identity provider and a test token.

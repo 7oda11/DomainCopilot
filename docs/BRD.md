@@ -106,7 +106,7 @@ Statuses below are planning statuses, not claims that a feature exists.
 |---|---|---|
 | D0 healthcare agents and clinician approval | Partial: case/run/note/decision domain model and approval lifecycle rules exist; agents and review API are pending | `src/DomainCopilot.Domain/Workflows`, `Approvals`, `Notes`; Domain unit tests; agent/API work remains Phase 9–11 |
 | T2 hosted/local automatic fallback and offline operation | Planned | Provider ADR, integration tests, Phase 8 |
-| ≥30 documents / ≥150 pages / synthetic or public only | Partial: the included synthetic corpus has 30 PDFs and 150 extractable pages; runtime ingestion has not been verified | `data/synthetic/corpus-manifest.json`, `docs/INGESTION.md`; Phase 6 live SQL Server/Ollama verification remains |
+| ≥30 documents / ≥150 pages / synthetic or public only | Verified locally: 30 synthetic PDFs / 150 extractable pages indexed as 150 chunks through the authenticated API | `data/synthetic/corpus-manifest.json`, `docs/INGESTION.md`, `docs/reports/retrieval-baseline-2026-11-21.json` |
 | FR-1 ingestion stages, metadata, idempotency, status | Partial: source fingerprint, format, version and processing states are modelled; extract/clean/chunk/embed/index adapters remain | `Documents/SourceDocument.cs`; pipeline/API work remains Phase 6 |
 | FR-2 hybrid retrieval, enhancement, citations, refusal | Partial: chunks preserve page/section/version and citations verify quoted text belongs to the cited chunk; retrieval/fusion/refusal use case remains | `Documents/DocumentChunk.cs`, `Evidence/EvidenceCitation.cs`; retrieval ADR and evaluation remain Phase 7 |
 | FR-3 ≥25 golden cases, adversarial/injection, runnable metrics | Planned | Harness and report, Phase 12 |
@@ -117,7 +117,7 @@ Statuses below are planning statuses, not claims that a feature exists.
 | FR-8 authentication and at least two server-enforced roles | Planned | Authorization tests, Phase 11 |
 | FR-9 correlation, token/cost data, traces, health/readiness | Planned | Observability tests, Phase 9, 11 |
 | Clean Architecture and provider/storage abstractions | Partial: project boundaries, automated dependency checks, repository and Unit of Work ports exist; provider and persistence adapters remain | `DomainCopilot.slnx`, `LayerDependencyTests.cs`, `Application/Abstractions/Persistence`; Phases 5, 8 |
-| Relational store, vector store and migrations | Partial: SQL Server EF migrations applied to a clean LocalDB database; SQLite vector index covered by infrastructure tests; corpus has not yet been indexed | `docs/LOCAL-DEMO.md`, `tests/DomainCopilot.Infrastructure.Tests/SqliteVectorIndexTests.cs`; live embeddings/indexing remains |
+| Relational store, vector store and migrations | Verified locally: SQL Server LocalDB migrations applied; 30 PDFs indexed into SQL Server and SQLite using Ollama Nomic embeddings | `docs/LOCAL-DEMO.md`, `docs/reports/retrieval-baseline-2026-11-21.json`, `tests/DomainCopilot.Infrastructure.Tests/SqliteVectorIndexTests.cs` |
 | Tests: unit, integration and contract | Partial: domain, application and architecture tests exist; integration/contract tests and CI remain | `tests/DomainCopilot.Domain.Tests`, `tests/DomainCopilot.Application.Tests`, `tests/DomainCopilot.ArchitectureTests`; Phases 5–13 |
 | Docker Compose, seed command, `.env.example` | Planned | Clean-start verification, Phase 13 |
 | OWASP controls and `docs/SECURITY.md` | Planned | Threat/control mapping and security tests, Phase 11–13 |
