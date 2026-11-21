@@ -3,25 +3,44 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using System.Text;
+using DomainCopilot.Application.Abstractions.Authentication;
+using DomainCopilot.Api.Authentication;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using System.Text.Json.Serialization;
 using DomainCopilot.Api.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var authority = builder.Configuration["Authentication:Authority"];
+var issuer = builder.Configuration["Authentication:Issuer"];
 var audience = builder.Configuration["Authentication:Audience"];
-if (string.IsNullOrWhiteSpace(authority) || string.IsNullOrWhiteSpace(audience))
+var signingKey = builder.Configuration["Authentication:SigningKey"];
+
+if (string.IsNullOrWhiteSpace(issuer) || string.IsNullOrWhiteSpace(audience)
+    || string.IsNullOrWhiteSpace(signingKey) || Encoding.UTF8.GetByteCount(signingKey) < 32)
 {
-    throw new InvalidOperationException("Configure Authentication:Authority and Authentication:Audience before starting the API.");
+    throw new InvalidOperationException("Configure Authentication:Issuer, Authentication:Audience, and a SigningKey of at least 32 bytes.");
 }
 
+var signingCredentialsKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = authority;
-        options.Audience = audience;
-        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
-        options.MapInboundClaims = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = signingCredentialsKey,
+            ValidateLifetime = true,
+            RoleClaimType = "role",
+            NameClaimType = "email",
+            ClockSkew = TimeSpan.FromSeconds(30)
+        };
     });
 builder.Services.AddAuthorization(options =>
 {
@@ -43,9 +62,25 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Domain Copilot API", Version = "v1" });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Paste the access token returned by POST /api/auth/login."
+    });
+    options.OperationFilter<JwtBearerOperationFilter>();
+});
 builder.Services.AddProblemDetails();
+builder.Services.AddScoped<IAccessTokenIssuer, JwtAccessTokenIssuer>();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
@@ -64,9 +99,23 @@ app.Use(async (context, next) =>
     context.Response.Headers["X-Content-Type-Options"] = "nosniff";
     context.Response.Headers["X-Frame-Options"] = "DENY";
     context.Response.Headers["Referrer-Policy"] = "no-referrer";
-    context.Response.Headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'";
+    context.Response.Headers["Content-Security-Policy"] = context.Request.Path.StartsWithSegments("/swagger")
+        ? "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-ancestors 'none'"
+        : "default-src 'none'; frame-ancestors 'none'";
     await next();
 });
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Domain Copilot API v1");
+        options.RoutePrefix = "swagger";
+        options.DocumentTitle = "Domain Copilot API";
+    });
+}
+
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();

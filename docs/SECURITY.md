@@ -2,8 +2,10 @@
 
 ## Authentication and access
 
-- The API refuses to start unless `Authentication:Authority` and `Authentication:Audience` are configured.
-- JWT bearer validation uses the configured identity provider. All endpoints require an authenticated user by default. The `Clinician` role is required to create synthetic clinical cases and make draft approval decisions; document and search endpoints are for authenticated users.
+- The API refuses to start unless `Authentication:Issuer`, `Authentication:Audience`, and a signing key of at least 32 bytes are configured. Store signing keys in User Secrets locally and a deployment secret manager in production.
+- `POST /api/auth/register` creates a `Researcher` account; clients cannot choose a role. Passwords are hashed with ASP.NET Identity's versioned password hasher. `POST /api/auth/login` issues a one-hour signed JWT. Invalid credentials use a generic response. Duplicate normalized email addresses are rejected by an SQL unique index.
+- All other endpoints require a valid bearer JWT by default. The `Clinician` role is required to create synthetic clinical cases and make draft approval decisions; document and search endpoints accept authenticated users. Public registration never grants the privileged `Clinician` role; a trusted provisioning flow for clinicians remains future work.
+- JWT signing uses a symmetric secret. Production deployments must provision a high-entropy secret, rotate it deliberately, use HTTPS, and avoid sharing the local development signing key.
 - `ReviewerId` comes from the validated identity claim, never from the review request body.
 - Review decisions are persisted with action, reviewer, timestamp, comment and edited content. The run state machine blocks repeated or out-of-order decisions.
 

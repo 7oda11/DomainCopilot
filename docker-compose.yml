@@ -29,8 +29,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       Database__ApplyMigrationsOnStartup: "true"
       ConnectionStrings__DefaultConnection: "Server=sql-server;Database=DomainCopilot;User Id=sa;Password=${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env};TrustServerCertificate=True;Encrypt=True"
-      Authentication__Authority: ${AUTHENTICATION_AUTHORITY:?Set AUTHENTICATION_AUTHORITY in .env}
+      Authentication__Issuer: ${AUTHENTICATION_ISSUER:-DomainCopilot}
       Authentication__Audience: ${AUTHENTICATION_AUDIENCE:-domain-copilot-api}
+      Authentication__SigningKey: ${AUTHENTICATION_SIGNING_KEY:?Set AUTHENTICATION_SIGNING_KEY in .env}
       AI__PrimaryProvider: ${AI_PRIMARY_PROVIDER:-gemini}
       AI__FallbackProvider: ollama
       AI__Gemini__ApiKey: ${GEMINI_API_KEY:-}

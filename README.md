@@ -19,7 +19,9 @@ DomainCopilot.Api -> DomainCopilot.Application -> DomainCopilot.Domain
 - `POST /api/copilot/drafts`: run the three-agent pipeline and save a draft for clinician review; `/stream` returns SSE progress.
 - `POST /api/drafts/{draftId}/review`: approve, reject or edit-and-approve (Clinician role).
 
-The API requires a JWT identity provider configured through `Authentication__Authority` and `Authentication__Audience`. For local startup set these in the environment; the placeholder in `appsettings.json` intentionally does not point to a real tenant.
+The API provides `POST /api/auth/register` and `POST /api/auth/login`. Registration creates a `Researcher` account; login returns a signed bearer JWT. Passwords are stored as ASP.NET Identity password hashes. Configure `Authentication:SigningKey` as a secret of at least 32 bytes, plus the issuer and audience, before starting the API. For local development, store the signing key with `dotnet user-secrets`; never commit it.
+
+Run `dotnet run --project src/DomainCopilot.Api --launch-profile http` to start the API and open Swagger UI at `http://localhost:5161/swagger`. The importable Postman collection is [`postman/DomainCopilot.postman_collection.json`](postman/DomainCopilot.postman_collection.json); select an environment, register, then log in to save the bearer token.
 
 ## Synthetic assessment corpus
 
