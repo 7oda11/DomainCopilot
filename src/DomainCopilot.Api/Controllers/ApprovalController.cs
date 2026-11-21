@@ -24,7 +24,7 @@ public sealed class ApprovalController(ReviewClinicalDraftHandler reviewDraft) :
         [FromBody] ReviewDraftRequest request,
         CancellationToken cancellationToken)
     {
-        var reviewerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var reviewerId = User.FindFirstValue("sub");
         if (string.IsNullOrWhiteSpace(reviewerId))
         {
             return Unauthorized(new ProblemDetails { Status = 401, Title = "Authenticated clinician required." });
