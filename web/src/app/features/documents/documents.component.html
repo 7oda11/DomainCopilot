@@ -1,0 +1,24 @@
+<section class="page" dir="rtl">
+  <header class="page-heading"><div><span class="eyebrow">قاعدة المعرفة</span><h1>المستندات و<em>الفهرسة</em></h1><p>المستند بيتحوّل لمقاطع وembeddings عشان يبقى قابل للبحث.</p></div><span class="format-pill">PDF · DOCX</span></header>
+  <div class="upload-layout">
+    <form class="upload-card" (ngSubmit)="upload()">
+      <div class="card-heading"><div><span class="eyebrow">مستند جديد</span><h2>أضف مصدرًا للبحث</h2></div><span class="step-no">01</span></div>
+      <label class="drop-zone" [class.drag-over]="dragOver" (dragover)="$event.preventDefault(); dragOver = true" (dragleave)="dragOver = false" (drop)="onDrop($event)">
+        <input type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" (change)="selectFile($event)">
+        <span class="upload-symbol">↑</span>
+        <strong>{{ file?.name || 'اسحب الملف هنا أو اضغط للاختيار' }}</strong>
+        <small>{{ file ? ((file.size / 1048576) | number:'1.1-1') + ' MB' : 'PDF أو DOCX · بحد أقصى 25 MB' }}</small>
+      </label>
+      <label class="field-label" for="version">رقم الإصدار</label><input id="version" class="text-input" name="version" [(ngModel)]="version" required maxlength="80" placeholder="مثال: 2026-v1">
+      <button class="button button-primary" [disabled]="busy() || !file">{{ busy() ? 'بنستخرج النص وبنفهرس...' : 'ارفع وابدأ الفهرسة' }} <span>←</span></button>
+      <div class="message success" *ngIf="success()">{{ success() }}</div><div class="message error" *ngIf="error()">{{ error() }}</div>
+    </form>
+    <aside class="process-card"><span class="eyebrow">اللي بيحصل بعد الرفع</span><h2>من الملف للمعلومة</h2>
+      <div class="process-step"><span>1</span><div><strong>استخراج النص</strong><p>قراءة النص والصفحات من PDF أو DOCX.</p></div></div>
+      <div class="process-step"><span>2</span><div><strong>تقسيم لمقاطع</strong><p>تقطيع المحتوى لأجزاء صغيرة قابلة للاسترجاع.</p></div></div>
+      <div class="process-step"><span>3</span><div><strong>إنشاء embeddings</strong><p>تحويل المقاطع لأرقام تساعد البحث بالمعنى.</p></div></div>
+      <div class="process-step"><span>4</span><div><strong>تخزين وفهرسة</strong><p>حفظ المقاطع ومصادرها وتجهيزها للبحث.</p></div></div>
+      <div class="privacy-note"><span>ⓘ</span><p>تجنب رفع مستندات تحتوي على بيانات شخصية أو سرية.</p></div>
+    </aside>
+  </div>
+</section>

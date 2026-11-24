@@ -1,0 +1,18 @@
+<section class="page" dir="rtl">
+  <header class="page-heading"><div><span class="eyebrow">استكشف محتواك</span><h1>البحث في <em>المصادر</em></h1><p>اسأل بطريقتك، وشوف المقاطع اللي النظام اعتمد عليها.</p></div><span class="method-pill"><i></i> بحث بالمعنى والكلمات</span></header>
+  <form class="search-card" (ngSubmit)="search()">
+    <label for="query">بتدور على إيه؟</label>
+    <div class="search-row"><span class="search-symbol">⌕</span><input id="query" name="query" [(ngModel)]="query" required maxlength="8000" placeholder="مثال: إيه عناصر توثيق المسودة المذكورة في الدليل؟"><button class="button button-primary" [disabled]="busy()">{{ busy() ? 'بندور...' : 'ابحث' }} <span>←</span></button></div>
+    <div class="search-foot"><span>النظام هيرجع مقاطع من المستندات، مش إجابة مولّدة.</span><label class="limit-label">عدد النتائج <select name="limit" [(ngModel)]="limit"><option [ngValue]="3">3</option><option [ngValue]="5">5</option><option [ngValue]="10">10</option><option [ngValue]="20">20</option></select></label></div>
+  </form>
+  <div class="message success" *ngIf="message()">{{ message() }}</div><div class="message error" *ngIf="error()">{{ error() }}</div>
+  <div class="results-heading" *ngIf="results.length"><div><span class="eyebrow">محتوى مسترجع</span><h2>المقاطع الأقرب لسؤالك</h2></div><span class="result-count">{{ results.length }} نتائج</span></div>
+  <div class="evidence-list">
+    <article class="evidence-card" *ngFor="let item of results; let i = index">
+      <div class="evidence-top"><span class="evidence-index">E{{ i + 1 }}</span><div class="source"><strong>{{ item.sourceName }}</strong><span>الإصدار {{ item.sourceVersion }} <ng-container *ngIf="item.pageNumber">· صفحة {{ item.pageNumber }}</ng-container></span></div><span class="relevance">{{ (item.score * 100) | number:'1.0-0' }}<small> ترتيب نسبي</small></span></div>
+      <p class="quote">“{{ item.quotedText }}”</p>
+      <div class="evidence-meta"><span *ngIf="item.section">{{ item.section }}</span><span>معرّف المقطع · {{ item.chunkId | slice:0:8 }}</span></div>
+    </article>
+  </div>
+  <div class="empty-state" *ngIf="!results.length && !message() && !error()"><span>⌕</span><strong>اكتب سؤالًا وابدأ البحث</strong><p>ارفع المستندات الأول لو لسه مفيش محتوى متفهرس.</p></div>
+</section>

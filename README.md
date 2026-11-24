@@ -23,6 +23,10 @@ The API provides `POST /api/auth/register` and `POST /api/auth/login`. Registrat
 
 Run `dotnet run --project src/DomainCopilot.Api --launch-profile http` to start the API and open Swagger UI at `http://localhost:5161/swagger`. The importable Postman collection is [`postman/DomainCopilot.postman_collection.json`](postman/DomainCopilot.postman_collection.json); select an environment, register, then log in to save the bearer token.
 
+The standalone Angular workspace for **HealthCareCopilot** is in [`web/`](web/README.md). Start the API, then run `npm install` and `npm start` from `web/`; the UI opens at `http://localhost:4200` and proxies `/api` calls to the API on port 5161. Both `Researcher` and `Clinician` accounts can use the workspace and review pending drafts.
+
+Readable, entirely fictional sample documents for local retrieval are in [`docs/samples/`](docs/samples/README.md). Do not use these examples as clinical guidance.
+
 ## Synthetic assessment corpus
 
 The repository includes 30 generated, fictional workflow PDFs with five explicit pages each (150 pages total). Regenerate them with `python scripts/generate_synthetic_corpus.py` (requires `reportlab`); the script writes a SHA-256 manifest. To index them, start the API and SQL Server, then set `DOMAINCOPILOT_API_URL` and `DOMAINCOPILOT_BEARER_TOKEN` and run `./scripts/ingest-synthetic-corpus.ps1` in PowerShell 7. No real patient data is included. These documents are engineering fixtures, not clinical guidance.

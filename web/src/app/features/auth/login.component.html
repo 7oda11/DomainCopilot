@@ -1,0 +1,42 @@
+<main class="auth-layout" dir="rtl">
+  <section class="auth-story">
+    <div class="brand-lockup"><span class="brand-mark">H</span><span>HealthCareCopilot</span></div>
+    <div class="story-content">
+      <span class="eyebrow">منصة البحث والتوثيق الذكي</span>
+      <h1>المعلومة الموثوقة،<br><em>في مكانها الصح.</em></h1>
+      <p>ابحث في مستنداتك، استخرج الأدلة، وجهّز مسودات قابلة للمراجعة — في مساحة واحدة.</p>
+      <div class="story-points">
+        <span><b>01</b> بحث مدعوم بالمصادر</span>
+        <span><b>02</b> مساعدات ذكية متعددة</span>
+        <span><b>03</b> مراجعة بشرية قبل الاعتماد</span>
+      </div>
+    </div>
+    <span class="story-footer">مساحة عمل موحدة للبحث وصياغة المسودات</span>
+  </section>
+  <section class="auth-panel">
+    <div class="auth-card">
+      <span class="eyebrow">أهلًا بيك</span>
+      <h2>{{ registerMode() ? 'اعمل حساب جديد' : 'سجّل دخولك' }}</h2>
+      <p class="muted">{{ registerMode() ? 'ابدأ حسابك على HealthCareCopilot.' : 'ادخل على مساحة العمل بتاعتك.' }}</p>
+      <form (ngSubmit)="submit()">
+        <label for="email">البريد الإلكتروني</label>
+        <input id="email" type="email" name="email" [(ngModel)]="email" required autocomplete="email" placeholder="name@example.com">
+        <label for="password">كلمة المرور</label>
+        <input id="password" type="password" name="password" [(ngModel)]="password" required minlength="12" autocomplete="current-password" placeholder="12 حرف على الأقل">
+        <div class="inline-notice" *ngIf="notice()">{{ notice() }}</div>
+        <div class="inline-alert" *ngIf="error()">{{ error() }}</div>
+        <button class="button button-primary full-width" type="submit" [disabled]="busy()">
+          {{ busy() ? 'لحظة واحدة...' : (registerMode() ? 'إنشاء الحساب' : 'دخول') }}
+          <span aria-hidden="true">←</span>
+        </button>
+      </form>
+      <div class="auth-switch">
+        {{ registerMode() ? 'عندك حساب بالفعل؟' : 'لسه ماعندكش حساب؟' }}
+        <button type="button" (click)="toggleMode()">
+          {{ registerMode() ? 'سجّل دخولك' : 'اعمل حساب' }}
+        </button>
+      </div>
+      <div class="security-note"><span>⌑</span><p>كلمة المرور بتتخزن بشكل مشفّر. استخدم كلمة مرور قوية ومختلفة.</p></div>
+    </div>
+  </section>
+</main>
