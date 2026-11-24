@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace DomainCopilot.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = "Clinician")]
+[Authorize(Policy = "ClinicalStaff")]
 [Route("api/drafts")]
 public sealed class ApprovalController(ReviewClinicalDraftHandler reviewDraft) : ControllerBase
 {
@@ -27,7 +27,7 @@ public sealed class ApprovalController(ReviewClinicalDraftHandler reviewDraft) :
         var reviewerId = User.FindFirstValue("sub");
         if (string.IsNullOrWhiteSpace(reviewerId))
         {
-            return Unauthorized(new ProblemDetails { Status = 401, Title = "Authenticated clinician required." });
+            return Unauthorized(new ProblemDetails { Status = 401, Title = "Authenticated staff member required." });
         }
 
         try

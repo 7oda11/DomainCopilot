@@ -96,7 +96,10 @@ public sealed class CopilotController(RunCopilotWorkflowHandler workflow) : Cont
 
     private async Task WriteEventAsync<T>(string eventName, T payload, CancellationToken cancellationToken)
     {
-        var json = JsonSerializer.Serialize(payload);
+        // This response is written directly to the SSE stream, so MVC's configured
+        // JSON naming policy does not apply. Use the same camelCase shape as the
+        // regular API responses consumed by the Angular client.
+        var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions(JsonSerializerDefaults.Web));
         await Response.WriteAsync($"event: {eventName}\ndata: {json}\n\n", cancellationToken);
         await Response.Body.FlushAsync(cancellationToken);
     }

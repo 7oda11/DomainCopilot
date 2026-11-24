@@ -23,14 +23,19 @@ public sealed class DocumentChunker
         var result = new List<ChunkText>();
         foreach (var page in pages)
         {
-            var text = string.Join(' ', page.Text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+            // Keep PDF/DOCX paragraph boundaries so retrieved excerpts remain readable.
+            var text = string.Join('\n', page.Text
+                .Replace("\r", string.Empty, StringComparison.Ordinal)
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                .Select(line => string.Join(' ', line.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)))
+                .Where(line => line.Length > 0));
             var offset = 0;
             while (offset < text.Length)
             {
                 var end = Math.Min(offset + _maxCharacters, text.Length);
                 if (end < text.Length)
                 {
-                    var boundary = text.LastIndexOfAny(['.', '!', '?', ';', ' '], end - 1, end - offset);
+                    var boundary = text.LastIndexOfAny(['.', '!', '?', ';', ' ', '\n'], end - 1, end - offset);
                     if (boundary > offset + _maxCharacters / 2)
                     {
                         end = boundary + 1;

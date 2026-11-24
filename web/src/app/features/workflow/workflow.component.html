@@ -1,0 +1,42 @@
+<section class="page" dir="rtl">
+  <header class="page-heading"><div><span class="eyebrow">سير العمل الذكي</span><h1>مسودة بمصادر <em>ومراجعة</em></h1><p>الـOrchestrator ينسق البحث والاسترجاع والـAgents، وهتشوف تقدم كل خطوة لحظيًا.</p></div><span class="workflow-badge">RAG <b>→</b> 3 Agents <b>→</b> Review</span></header>
+  <div class="workflow-layout">
+    <form class="request-card" (ngSubmit)="createAndRun()">
+      <div class="card-title"><span class="number">01</span><div><strong>الحالة والسؤال</strong><small>سياق تشغيل المساعد</small></div></div>
+      <label for="caseSummary">ملخص الحالة</label>
+      <textarea id="caseSummary" name="summary" [(ngModel)]="summary" required maxlength="8000" rows="4" placeholder="اكتب ملخص الحالة..."></textarea>
+      <label for="question">المطلوب من الـCopilot</label>
+      <textarea id="question" name="question" [(ngModel)]="question" required maxlength="8000" rows="4" placeholder="مثال: لخص ما تقوله المصادر عن طريقة توثيق الحالة، مع ذكر الإحالات."></textarea>
+      <label class="limit-label" for="evidenceLimit">عدد المقاطع اللي نبحث عنها
+        <select id="evidenceLimit" name="limit" [(ngModel)]="evidenceLimit"><option [ngValue]="3">3</option><option [ngValue]="5">5</option><option [ngValue]="8">8</option><option [ngValue]="10">10</option></select>
+      </label>
+      <button class="button button-primary" [disabled]="busy()">{{ busy() ? currentStep() : 'أنشئ الحالة وابدأ' }} <span>←</span></button>
+      <div class="message error" *ngIf="error()">{{ error() }}</div>
+    </form>
+    <aside class="steps-card">
+      <span class="eyebrow">رحلة الطلب</span><h2>إيه اللي هيحصل؟</h2>
+      <div class="timeline">
+        <div class="timeline-step"><span class="timeline-icon">▣</span><div><strong>حفظ الحالة</strong><p>يتعمل ملف حالة ورقم caseId في SQL Server.</p></div></div>
+        <div class="timeline-step"><span class="timeline-icon">⌕</span><div><strong>RAG يسترجع الأدلة</strong><p>بحث بالمعنى والكلمات في المقاطع المفهرسة.</p></div></div>
+        <div class="timeline-step"><span class="timeline-icon">✳</span><div><strong>الباحث وكاتب المسودة بالتوازي</strong><p>كل واحد يحلل الأدلة المسترجعة، وبعدها مراجع السلامة يفحص المسودة.</p></div></div>
+        <div class="timeline-step"><span class="timeline-icon">✓</span><div><strong>مراجع السلامة</strong><p>يراجع المسودة ضد المقاطع قبل حفظها.</p></div></div>
+        <div class="timeline-step"><span class="timeline-icon">♧</span><div><strong>مراجعة بشرية</strong><p>المسودة تفضل محتاجة قرار من مستخدم مسجل.</p></div></div>
+      </div>
+      <div class="disclaimer">راجع الأدلة والمسودة قبل اعتمادها أو استخدامها.</div>
+    </aside>
+  </div>
+  <section class="progress-panel" *ngIf="progressVisible()" aria-live="polite" aria-atomic="false">
+    <div class="progress-heading"><div><span class="eyebrow">تقدم التشغيل</span><h2>{{ currentStep() }}</h2></div><span class="running-indicator" *ngIf="busy()"><i></i> شغال الآن</span></div>
+    <ol class="progress-steps"><li *ngFor="let step of steps()" [class.active]="step.state === 'active' || step.state === 'retrying'" [class.completed]="step.state === 'completed'" [class.failed]="step.state === 'failed'" [class.skipped]="step.state === 'skipped'"><span class="step-marker">{{ step.state === 'completed' ? '✓' : step.state === 'failed' ? '!' : step.state === 'skipped' ? '–' : '' }}</span><div><strong>{{ step.label }}</strong><p>{{ step.detail }}</p></div><span class="step-status">{{ step.state === 'waiting' ? 'في الانتظار' : step.state === 'active' ? 'جارية' : step.state === 'retrying' ? 'إعادة المحاولة' : step.state === 'completed' ? 'اكتملت' : step.state === 'failed' ? 'تعذرت' : 'تخطيناها' }}</span></li></ol>
+  </section>
+  <div class="message success" *ngIf="message()">{{ message() }}</div>
+  <section class="result-panel" *ngIf="result as output">
+    <div class="result-head"><div><span class="eyebrow">نتيجة التشغيل</span><h2>{{ statusLabel(output.status) }}</h2></div><span class="provider">{{ output.activeProvider }} <small *ngIf="output.isDegraded">· وضع بديل</small></span></div>
+    <div class="run-meta"><span>Run · {{ output.runId }}</span><span *ngIf="output.draftId">Draft · {{ output.draftId }}</span></div>
+    <div class="agent-grid"><article class="agent-card" *ngFor="let step of output.trace"><span class="agent-check">✓</span><div><strong>{{ step.agentName }}</strong><p>{{ step.providerId }} · {{ step.elapsedMilliseconds }} ms</p></div><span class="agent-state">{{ step.outcome === 'completed' ? 'اكتمل' : step.outcome }}</span></article></div>
+    <div class="draft-preview" *ngIf="output.draft"><div class="draft-title"><div><span class="eyebrow">مسودة للمراجعة</span><h3>النص المقترح</h3></div><span class="review-needed" *ngIf="output.requiresClinicianApproval">تحتاج مراجعة</span></div><textarea *ngIf="output.draftId && output.status === 'AwaitingApproval'; else readOnlyDraft" name="editedDraft" [(ngModel)]="editedDraft" rows="8" aria-label="محتوى المسودة المعدلة"></textarea><ng-template #readOnlyDraft><p>{{ output.draft }}</p></ng-template></div>
+    <div class="result-head evidence-head" *ngIf="output.evidence.length"><div><span class="eyebrow">مصادر المسودة</span><h3>الأدلة المسترجعة</h3></div></div>
+    <article class="evidence-item" *ngFor="let item of output.evidence; let i = index"><span class="evidence-label">E{{ i + 1 }}</span><div><strong>{{ item.sourceName }}</strong><small>صفحة {{ item.pageNumber ?? 'غير محددة' }} · {{ item.sourceVersion }}</small><p>{{ item.quotedText }}</p></div></article>
+    <div class="review-box" *ngIf="output.draftId && output.status === 'AwaitingApproval'"><label for="reviewComment">تعليق المراجع (اختياري)</label><textarea id="reviewComment" name="reviewComment" [(ngModel)]="reviewComment" rows="2" placeholder="اكتب ملاحظة للمراجعة..."></textarea><div class="review-actions"><button class="button button-approve" (click)="review('Approved')" [disabled]="busy()">موافقة</button><button class="button button-reject" (click)="review('Rejected')" [disabled]="busy()">رفض</button><button class="button button-edit" (click)="review('EditedAndApproved')" [disabled]="busy()">اعتماد النسخة الحالية بعد المراجعة</button></div></div>
+  </section>
+</section>

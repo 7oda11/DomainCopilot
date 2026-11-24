@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DomainCopilot.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = "Clinician")]
+[Authorize(Policy = "ClinicalStaff")]
 [Route("api/cases")]
 public sealed class CasesController(IRepository<ClinicalCase> cases, IUnitOfWork unitOfWork,
     TimeProvider timeProvider, PiiRedactor piiRedactor) : ControllerBase

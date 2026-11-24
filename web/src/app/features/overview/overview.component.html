@@ -1,0 +1,18 @@
+<section class="page" dir="rtl">
+  <header class="page-heading">
+    <div><span class="eyebrow">مساحة العمل</span><h1>أهلًا بيك في <em>HealthCareCopilot</em></h1><p>مساحة واحدة للمستندات، البحث، وتجهيز المسودات للمراجعة.</p></div>
+    <span class="demo-badge"><i></i> بحث مؤسس على المصادر</span>
+  </header>
+  <div class="welcome-card">
+    <div class="welcome-copy"><span class="overline">ابدأ من هنا</span><h2>من مستنداتك… لقرار أوضح.</h2><p>ارفع ملفًا، اسأل سؤالًا، وخلي المساعد يجيبلك المقاطع اللي اعتمد عليها.</p>
+      <button class="button button-light" (click)="navigate.emit('documents')">ارفع أول مستند <span>←</span></button></div>
+    <div class="welcome-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="doc-icon">▤</div><div class="spark spark-one">✳</div><div class="spark spark-two">✦</div></div>
+  </div>
+  <div class="section-title"><div><span class="eyebrow">الأدوات</span><h2>إيه اللي حابب تعمله؟</h2></div><span class="muted-small">اختار خطوة وهنمشيها سوا</span></div>
+  <div class="tool-grid">
+    <button class="tool-card" (click)="navigate.emit('search')"><span class="tool-icon icon-search">⌕</span><span class="tool-title">ابحث في المصادر</span><span class="tool-description">اسأل سؤالًا وشوف المقاطع المطابقة من مستنداتك.</span><span class="tool-arrow">←</span></button>
+    <button class="tool-card" (click)="navigate.emit('documents')"><span class="tool-icon icon-doc">▤</span><span class="tool-title">أضف مستندًا</span><span class="tool-description">ارفع PDF أو DOCX عشان يبقى متاحًا للبحث.</span><span class="tool-arrow">←</span></button>
+    <button class="tool-card" (click)="navigate.emit('workflow')"><span class="tool-icon icon-ai">✳</span><span class="tool-title">جهّز مسودة</span><span class="tool-description">استخدم الأدلة لتجهيز مسودة تمر على مراجعة بشرية.</span><span class="tool-arrow">←</span></button>
+  </div>
+  <div class="principle-card"><span class="principle-mark">“</span><div><strong>الدليل قبل الإجابة</strong><p>المساعد يبحث في مستنداتك أولًا. لو ملقاش دليل مناسب، يوضح إن المعلومات مش كفاية.</p></div><span class="principle-tag">RAG · HUMAN REVIEW</span></div>
+</section>
