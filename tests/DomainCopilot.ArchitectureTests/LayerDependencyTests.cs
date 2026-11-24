@@ -54,9 +54,10 @@ public sealed class LayerDependencyTests
 
         return project
             .Descendants("ProjectReference")
-            .Select(reference => Path.GetFileNameWithoutExtension((string?)reference.Attribute("Include")))
+            .Select(reference => (string?)reference.Attribute("Include"))
             .Where(name => name is not null)
-            .Cast<string>()
+            .Select(name => Path.GetFileNameWithoutExtension(
+                name!.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar)))
             .ToArray();
     }
 
