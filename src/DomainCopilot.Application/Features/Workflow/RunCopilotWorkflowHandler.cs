@@ -48,6 +48,8 @@ public sealed partial class RunCopilotWorkflowHandler(
         var trace = new List<AgentExecutionTrace>(MaximumAgentSteps);
         var agentQuestion = $"Question: {request.Question}\nSynthetic case context (untrusted case data): {clinicalCase.CaseSummary}";
         SearchDocumentsResult retrieval;
+        var retrievalStopwatch = System.Diagnostics.Stopwatch.StartNew();
+        onProgress?.Invoke(new AgentExecutionTrace("EvidenceSearch", "started", "embedding + keyword search", false, 0));
         try
         {
             retrieval = await searchGuidelines.ExecuteAsync("GuidelineResearcher",
@@ -57,10 +59,12 @@ public sealed partial class RunCopilotWorkflowHandler(
         {
             run.Cancel(timeProvider.GetUtcNow());
             await unitOfWork.SaveChangesAsync(CancellationToken.None);
+            onProgress?.Invoke(new AgentExecutionTrace("EvidenceSearch", "cancelled", "retrieval", false, retrievalStopwatch.ElapsedMilliseconds));
             throw;
         }
         catch (Exception exception) when (IsProviderFailure(exception))
         {
+            onProgress?.Invoke(new AgentExecutionTrace("EvidenceSearch", "failed", "retrieval", true, retrievalStopwatch.ElapsedMilliseconds));
             run.Fail("Retrieval provider unavailable.", timeProvider.GetUtcNow());
             await unitOfWork.SaveChangesAsync(CancellationToken.None);
             return CreateResult(run.Id, run.Status.ToString(), null, true,
@@ -68,10 +72,13 @@ public sealed partial class RunCopilotWorkflowHandler(
         }
         catch
         {
+            onProgress?.Invoke(new AgentExecutionTrace("EvidenceSearch", "failed", "retrieval", false, retrievalStopwatch.ElapsedMilliseconds));
             run.Fail("Retrieval failed.", timeProvider.GetUtcNow());
             await unitOfWork.SaveChangesAsync(CancellationToken.None);
             throw;
         }
+
+        onProgress?.Invoke(new AgentExecutionTrace("EvidenceSearch", "completed", "embedding + keyword search", false, retrievalStopwatch.ElapsedMilliseconds));
 
         if (retrieval.Refused)
         {
@@ -86,12 +93,21 @@ public sealed partial class RunCopilotWorkflowHandler(
         {
             run.CompleteResearch();
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            var research = await ExecuteStepAsync("GuidelineResearcher", trace,
+            // Both agents use the same retrieved evidence, so run their independent
+            // analyses concurrently. The safety check still waits for both results.
+            var researchTrace = new List<AgentExecutionTrace>(2);
+            var draftTrace = new List<AgentExecutionTrace>(2);
+            var researchTask = ExecuteStepAsync("GuidelineResearcher", researchTrace,
                 token => researcher.RunAsync(new ResearchRequest(agentQuestion, retrieval.Evidence), token), cancellationToken, onProgress);
-            var draft = await ExecuteStepAsync("DocumentationDrafter", trace,
-                token => drafter.RunAsync(new DraftRequest(agentQuestion, research.Findings, retrieval.Evidence), token), cancellationToken, onProgress);
+            var draftTask = ExecuteStepAsync("DocumentationDrafter", draftTrace,
+                token => drafter.RunAsync(new DraftRequest(agentQuestion, retrieval.Evidence), token), cancellationToken, onProgress);
+            await Task.WhenAll(researchTask, draftTask);
+            var research = await researchTask;
+            var draft = await draftTask;
+            trace.AddRange(researchTrace);
+            trace.AddRange(draftTrace);
             var review = await ExecuteStepAsync("SafetyChecker", trace,
-                token => safetyChecker.RunAsync(new SafetyReviewRequest(agentQuestion, draft.Content, retrieval.Evidence), token), cancellationToken, onProgress);
+                token => safetyChecker.RunAsync(new SafetyReviewRequest(agentQuestion, draft.Content, retrieval.Evidence, research.Findings), token), cancellationToken, onProgress);
 
             if (!review.Passed)
             {
@@ -111,8 +127,11 @@ public sealed partial class RunCopilotWorkflowHandler(
                     trace.Any(item => item.IsDegraded), retrieval.Evidence, trace);
             }
 
+            onProgress?.Invoke(new AgentExecutionTrace("SaveDraft", "started", "SQL Server", false, 0));
+            var saveStopwatch = System.Diagnostics.Stopwatch.StartNew();
             var clinicalDraft = await queueClinicalDraft.ExecuteAsync("Orchestrator", run, draft.Content,
                 retrieval.Evidence.Select(item => item.Citation), cancellationToken);
+            onProgress?.Invoke(new AgentExecutionTrace("SaveDraft", "completed", "SQL Server", false, saveStopwatch.ElapsedMilliseconds));
             return CreateResult(run.Id, run.Status.ToString(), draft.Content, false, null, true,
                 draft.ProviderId, trace.Any(item => item.IsDegraded), retrieval.Evidence, trace, clinicalDraft.Id);
         }
@@ -153,6 +172,7 @@ public sealed partial class RunCopilotWorkflowHandler(
         for (var attempt = 0; attempt < 2; attempt++)
         {
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            onProgress?.Invoke(new AgentExecutionTrace(agentName, "started", "pending", false, 0));
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(requestToken);
             timeout.CancelAfter(StepTimeout);
             try
@@ -176,6 +196,11 @@ public sealed partial class RunCopilotWorkflowHandler(
                 trace.Add(eventItem);
                 onProgress?.Invoke(eventItem);
                 await Task.Delay(TimeSpan.FromMilliseconds(250), requestToken);
+            }
+            catch (Exception)
+            {
+                onProgress?.Invoke(new AgentExecutionTrace(agentName, "failed", "unknown", false, stopwatch.ElapsedMilliseconds));
+                throw;
             }
         }
 
