@@ -2,7 +2,7 @@
 
 ## Current result
 
-**Not yet verified end to end.** Gemini-to-Ollama chat fallback and Ollama embedding adapters exist. The existing local workflow smoke test ran while internet access was available, so it is not evidence of T2 offline compliance. Do not mark the requirement passed until the checklist below has been run on the assessment machine. Configure `AI:PrimaryProvider=ollama` in this profile so a local-only run cannot use Gemini as its primary provider.
+**Partially verified; host-wide disconnection is still pending.** On 2026-11-25 the full RAG, three-agent, and clinician-approval workflow completed with Ollama for chat and embeddings. The API process's outgoing HTTP proxy was pointed at an unavailable loopback port, and a .NET HTTP probe confirmed external HTTP failed at that local proxy while loopback Ollama stayed available. However, Windows denied permission to change WLAN/firewall settings, and Wi-Fi reconnected automatically. This proves the app workflow can complete with its external HTTP path blocked; it does **not** prove the whole machine was disconnected from the Internet. Keep the T2 requirement marked partial until the disconnected run checklist below is completed. See [the recorded run](reports/offline-workflow-2026-11-25.md).
 
 ## Preparation (while online)
 

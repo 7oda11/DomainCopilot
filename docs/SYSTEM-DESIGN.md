@@ -13,7 +13,7 @@ Domain Copilot is an assessment MVP for D0T2: it ingests public or synthetic PDF
 | Evidence-grounded answer/refusal | Researcher, Drafter, SafetyChecker, citation validator | Partial; refusal baseline is 72%, must improve and measure at answer level |
 | Orchestrated agents and restricted tools | typed agents, `AgentToolCatalog`, `RunCopilotWorkflowHandler` | Implemented for the demo; no autonomous agent tool execution |
 | Human approval | approval domain lifecycle and API | Implemented; API policy restricts review to Clinician |
-| Offline/degraded mode | Gemini chat fallback to Ollama; Ollama embeddings supported | Partial; a disconnected full workflow has not been verified |
+| Offline/degraded mode | Gemini chat fallback to Ollama; Ollama embeddings supported | Partial; full workflow passed with API-process HTTP egress isolation, but system-wide network disconnection remains unverified because Windows denied WLAN/firewall changes. See `docs/OFFLINE-VERIFICATION.md`. |
 | Persistent run history and traces | SQL `CopilotRuns`, `WorkflowTraceEntries`, `GET /api/copilot/runs/{runId}/trace` | Implemented for completed agent stages; failed-stage persistence is limited |
 | Live streaming/cancellation | progress events via SSE and linked cancellation token | Partial; this streams workflow progress, not generated tokens |
 | Role enforcement | JWT roles and endpoint policies | Implemented: only Clinician can review; public registration grants Researcher only |
