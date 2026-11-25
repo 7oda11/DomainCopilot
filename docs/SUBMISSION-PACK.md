@@ -107,6 +107,11 @@ For a scale cost model, show the formula and units rather than fabricate a month
 
 The teaching materials are in [`../teaching/`](../teaching/): `SESSION.md` (90-minute plan), `LAB.md`, `CHALLENGES.md`, `ASSESSMENT-MAP.md`, `MISCONCEPTIONS.md`, and `SLIDES.md` (18-slide topic outline). The project overview deck and short RAG explainer are in [`../teaching/presentations/`](../teaching/presentations/). For a 90-minute postgraduate session, use the RAG deck with the lab and instructor notes; the project deck is an end-to-end architecture and assessment walkthrough.
 
+Video evidence:
+
+- [Project demo video](https://drive.google.com/file/d/1xEalHhp6k-2rfZAStlbY3ATT95uxAdYP/view?usp=sharing)
+- [Teaching sample video](https://drive.google.com/file/d/1PQhmXfyajqlgaqX5ay1ptNMiFuJJ-CJD/view?usp=sharing)
+
 Before submission, confirm the teaching pack includes 15–25 teaching slides with timings, a trainee lab with expected outputs and answer key, at least three stretch challenges, outcome-to-assessment mapping, and a one-page list of five predictable misconceptions with corrections. Rehearse the demo and local model download before the session.
 
 ## Final submission checklist
@@ -119,4 +124,5 @@ Before submission, confirm the teaching pack includes 15–25 teaching slides wi
 - [ ] Cost model states traffic assumptions and current rate sources; unknown usage remains unknown.
 - [ ] All Mermaid diagrams render, all four ADRs are readable, and Part A/Part B plus the gap table are present in the System Design.
 - [ ] Teaching lab, answer key, assessment map, misconception note, presentations and 5-minute demo are rehearsed.
+- [ ] Project demo and teaching sample video links open for the evaluator.
 - [ ] No credentials, real patient data, unreviewed output, or misleading claims are included in the public repository or slides.

@@ -13,9 +13,30 @@ DomainCopilot.Api -> DomainCopilot.Application -> DomainCopilot.Domain
 
 ## Submission assets
 
-- [D0T2 submission pack guide](docs/SUBMISSION-PACK.md) and [formatted Word version](docs/SUBMISSION-PACK-GUIDE.docx)
-- [Project overview deck (22 slides)](teaching/presentations/HealthCareCopilot-Project-Overview.pptx)
-- [Short RAG explainer (9 slides)](teaching/presentations/HealthCareCopilot-RAG-Explainer.pptx)
+Use this map to find each assessment deliverable:
+
+| Deliverable | Location |
+|---|---|
+| Public GitHub repository (keep public for 30 days) | [github.com/7oda11/DomainCopilot](https://github.com/7oda11/DomainCopilot) |
+| Consolidated submission guide | [Markdown guide](docs/SUBMISSION-PACK.md) · [Word guide](docs/SUBMISSION-PACK-GUIDE.docx) |
+| BRD: context, personas, measurable objectives, requirements, scope, risks, traceability | [docs/BRD.md](docs/BRD.md) |
+| System Design: target architecture, implemented MVP, gaps, tradeoffs | [docs/SYSTEM-DESIGN.md](docs/SYSTEM-DESIGN.md) |
+| C4 diagrams, workflow sequence, trust boundaries, ER/layer views | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| Architecture decisions (ADRs) | [docs/adr/](docs/adr/) |
+| Security report | [docs/SECURITY.md](docs/SECURITY.md) |
+| Evaluation methodology and measured results | [docs/EVALUATION.md](docs/EVALUATION.md) · [golden cases](tests/DomainCopilot.Evaluation/evaluation-cases.json) · [baseline report](docs/reports/retrieval-baseline-2026-11-21.json) |
+| Offline/degraded-mode checklist and run evidence | [docs/OFFLINE-VERIFICATION.md](docs/OFFLINE-VERIFICATION.md) · [offline workflow report](docs/reports/offline-workflow-2026-11-25.md) |
+| AI-use record | [docs/AI-USAGE-LOG.md](docs/AI-USAGE-LOG.md) |
+| 90-minute teaching plan, lab, answers/challenges, outcomes and misconceptions | [teaching/](teaching/) |
+| Project overview deck (22 slides) | [teaching/presentations/HealthCareCopilot-Project-Overview.pptx](teaching/presentations/HealthCareCopilot-Project-Overview.pptx) |
+| Short RAG explainer (9 slides) | [teaching/presentations/HealthCareCopilot-RAG-Explainer.pptx](teaching/presentations/HealthCareCopilot-RAG-Explainer.pptx) |
+| Project demo video | [Google Drive video](https://drive.google.com/file/d/1xEalHhp6k-2rfZAStlbY3ATT95uxAdYP/view?usp=sharing) |
+| Teaching sample video | [Google Drive video](https://drive.google.com/file/d/1PQhmXfyajqlgaqX5ay1ptNMiFuJJ-CJD/view?usp=sharing) |
+| Docker setup and local configuration | [Dockerfile](Dockerfile) · [docker-compose.yml](docker-compose.yml) · [.env.example](.env.example) |
+| Database migrations, synthetic documents and case examples | [EF Core migrations](src/DomainCopilot.Infrastructure/Migrations/) · [docs/samples/](docs/samples/) · [30-document corpus](data/synthetic/) |
+| Test and CI setup | [tests/](tests/) · [GitHub Actions](.github/workflows/) |
+
+**5-minute demo path:** register/login → upload a synthetic document → create a case → ask a supported question → inspect citations and trace → show Researcher review denied (403) → approve as Clinician. See [docs/LOCAL-DEMO.md](docs/LOCAL-DEMO.md) for the full runbook and current limitations.
 
 ## Current API slices
 

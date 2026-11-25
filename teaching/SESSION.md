@@ -1,5 +1,7 @@
 # 90-minute teaching session: grounded healthcare RAG
 
+Teaching sample recording: [watch the teaching sample](https://drive.google.com/file/d/1PQhmXfyajqlgaqX5ay1ptNMiFuJJ-CJD/view?usp=sharing).
+
 ## Learning outcomes
 
 By the end, learners can: (1) explain chunking, hybrid retrieval and citations; (2) identify prompt injection as untrusted content; (3) inspect a refusal and distinguish retrieval from answer safety; (4) trace Clean Architecture dependencies; (5) explain why a clinician approval gate is mandatory; (6) run a local model fallback and describe what must be tested offline.
