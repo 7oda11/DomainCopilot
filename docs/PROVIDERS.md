@@ -12,4 +12,6 @@
 
 `IChatCompletionService` returns the provider ID and `IsDegraded`. The fallback logs the primary-provider failure and only treats timeout/network/provider-unavailable or malformed-provider responses as failover conditions. Caller cancellation is passed through and does not start another model request. Gemini has a 20-second timeout and local Ollama has a 90-second timeout.
 
+Workflow agent traces are persisted and queryable at `GET /api/copilot/runs/{runId}/trace`. Provider-reported input/output tokens are saved when available. Configure `AI:GeminiCostPerMillionInputTokensUsd` and `AI:GeminiCostPerMillionOutputTokensUsd` together to calculate estimated Gemini USD cost; estimates remain `null` for Ollama, or when either rate or token usage is unavailable. These operator-supplied rates should match the configured Gemini model and billing terms. Local hardware/electricity cost is not estimated.
+
 Local operation requires Ollama to be installed, both local models to be present before disconnecting, and SQL Server plus the local SQLite index to be available. The code path is implemented; an offline claim is not verified until an end-to-end ingestion and search run succeeds with internet blocked on the target machine. Local model answers may differ in structured-output quality and speed from Gemini.

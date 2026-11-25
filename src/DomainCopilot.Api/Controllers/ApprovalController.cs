@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace DomainCopilot.Api.Controllers;
 
 [ApiController]
-[Authorize(Policy = "ClinicalStaff")]
+[Authorize(Policy = "Clinician")]
 [Route("api/drafts")]
 public sealed class ApprovalController(ReviewClinicalDraftHandler reviewDraft) : ControllerBase
 {

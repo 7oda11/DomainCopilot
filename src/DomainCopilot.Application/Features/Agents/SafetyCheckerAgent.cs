@@ -29,7 +29,7 @@ public sealed class SafetyCheckerAgent(IChatCompletionService chatCompletion)
             var root = json.RootElement;
             var passed = root.GetProperty("passed").GetBoolean();
             var issues = root.GetProperty("issues").EnumerateArray().Select(item => item.GetString() ?? "Unspecified safety issue.").ToArray();
-            return new SafetyReviewResult(passed, issues, response.ProviderId, response.IsDegraded);
+            return new SafetyReviewResult(passed, issues, response.ProviderId, response.IsDegraded, response.InputTokens, response.OutputTokens);
         }
         catch (JsonException)
         {

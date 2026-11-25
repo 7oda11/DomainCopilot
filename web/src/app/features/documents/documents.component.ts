@@ -3,16 +3,43 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomainCopilotApiService } from '../../services/domain-copilot-api.service';
+import { AuthSessionService } from '../../services/auth-session.service';
+import { WorkspaceDocument, WorkspaceDocumentContent } from '../../models/api.models';
 
 @Component({ selector: 'app-documents', imports: [CommonModule, FormsModule], templateUrl: './documents.component.html', styleUrl: './documents.component.css' })
 export class DocumentsComponent {
   private readonly api = inject(DomainCopilotApiService);
+  protected readonly session = inject(AuthSessionService);
   protected readonly busy = signal(false);
   protected readonly error = signal('');
   protected readonly success = signal('');
   protected file?: File;
   protected version = 'v1';
   protected dragOver = false;
+  protected readonly documents = signal<WorkspaceDocument[]>([]);
+  protected readonly openedDocument = signal<WorkspaceDocumentContent | null>(null);
+
+  constructor() {
+    if (this.session.isClinician()) this.loadDocuments();
+  }
+
+  protected loadDocuments(): void {
+    this.busy.set(true); this.error.set('');
+    this.api.allDocuments().subscribe({
+      next: documents => { this.documents.set(documents); this.busy.set(false); },
+      error: () => { this.error.set('تعذر تحميل ملفات النظام.'); this.busy.set(false); },
+    });
+  }
+
+  protected openDocument(document: WorkspaceDocument): void {
+    this.busy.set(true); this.error.set(''); this.openedDocument.set(null);
+    this.api.documentContent(document.documentId).subscribe({
+      next: content => { this.openedDocument.set(content); this.busy.set(false); },
+      error: () => { this.error.set('تعذر فتح المحتوى المستخرج من المستند.'); this.busy.set(false); },
+    });
+  }
+
+  protected closeDocument(): void { this.openedDocument.set(null); }
 
   protected selectFile(event: Event): void {
     const input = event.target as HTMLInputElement;

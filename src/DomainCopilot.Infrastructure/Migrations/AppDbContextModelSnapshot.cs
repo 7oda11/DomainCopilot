@@ -71,10 +71,17 @@ namespace DomainCopilot.Infrastructure.Migrations
                         .HasMaxLength(8000)
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<DateTimeOffset>("CreatedAtUtc")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId", "CreatedAtUtc");
 
                     b.ToTable("ClinicalCases", (string)null);
                 });
@@ -127,6 +134,11 @@ namespace DomainCopilot.Infrastructure.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<string>("UploadedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<DateTimeOffset>("CreatedAtUtc")
                         .HasColumnType("datetimeoffset");
 
@@ -158,6 +170,8 @@ namespace DomainCopilot.Infrastructure.Migrations
 
                     b.HasIndex("ContentSha256", "Version")
                         .IsUnique();
+
+                    b.HasIndex("UploadedByUserId", "CreatedAtUtc");
 
                     b.ToTable("SourceDocuments", (string)null);
                 });
@@ -233,6 +247,11 @@ namespace DomainCopilot.Infrastructure.Migrations
                     b.Property<Guid>("CaseId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<DateTimeOffset?>("CompletedAtUtc")
                         .HasColumnType("datetimeoffset");
 
@@ -246,6 +265,11 @@ namespace DomainCopilot.Infrastructure.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasMaxLength(8000)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(24)
@@ -255,7 +279,27 @@ namespace DomainCopilot.Infrastructure.Migrations
 
                     b.HasIndex("CaseId", "CreatedAtUtc");
 
+                    b.HasIndex("CreatedByUserId", "CreatedAtUtc");
+
                     b.ToTable("CopilotRuns", (string)null);
+                });
+
+            modelBuilder.Entity("DomainCopilot.Infrastructure.Observability.WorkflowTraceEntry", b =>
+                {
+                    b.Property<Guid>("Id").HasColumnType("uniqueidentifier");
+                    b.Property<string>("AgentName").IsRequired().HasMaxLength(80).HasColumnType("nvarchar(80)");
+                    b.Property<DateTimeOffset>("CreatedAtUtc").HasColumnType("datetimeoffset");
+                    b.Property<long>("ElapsedMilliseconds").HasColumnType("bigint");
+                    b.Property<decimal?>("EstimatedCostUsd").HasPrecision(18, 8).HasColumnType("decimal(18,8)");
+                    b.Property<int?>("InputTokens").HasColumnType("int");
+                    b.Property<bool>("IsDegraded").HasColumnType("bit");
+                    b.Property<string>("Outcome").IsRequired().HasMaxLength(24).HasColumnType("nvarchar(24)");
+                    b.Property<string>("ProviderId").IsRequired().HasMaxLength(80).HasColumnType("nvarchar(80)");
+                    b.Property<Guid>("RunId").HasColumnType("uniqueidentifier");
+                    b.Property<int?>("OutputTokens").HasColumnType("int");
+                    b.HasKey("Id");
+                    b.HasIndex("RunId", "CreatedAtUtc");
+                    b.ToTable("WorkflowTraceEntries", (string)null);
                 });
 
             modelBuilder.Entity("DomainCopilot.Domain.Approvals.ApprovalRecord", b =>
@@ -335,6 +379,15 @@ namespace DomainCopilot.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("CaseId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DomainCopilot.Infrastructure.Observability.WorkflowTraceEntry", b =>
+                {
+                    b.HasOne("DomainCopilot.Domain.Workflows.CopilotRun", null)
+                        .WithMany()
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

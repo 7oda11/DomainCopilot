@@ -49,7 +49,9 @@ builder.Services.AddAuthorization(options =>
         .RequireAuthenticatedUser().Build();
     options.DefaultPolicy = authenticated;
     options.FallbackPolicy = authenticated;
-    options.AddPolicy("ClinicalStaff", policy => policy.RequireRole("Clinician", "Researcher"));
+    options.AddPolicy("ResearcherOrClinician", policy => policy.RequireRole("Clinician", "Researcher"));
+    options.AddPolicy("Researcher", policy => policy.RequireRole("Researcher"));
+    options.AddPolicy("Clinician", policy => policy.RequireRole("Clinician"));
 });
 builder.Services.AddRateLimiter(options =>
 {

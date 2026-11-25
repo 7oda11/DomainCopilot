@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using DomainCopilot.Application.Features.Agents;
 using DomainCopilot.Application.Features.Retrieval;
 using DomainCopilot.Application.Abstractions.Persistence;
+using DomainCopilot.Application.Abstractions.Observability;
 using DomainCopilot.Application.Errors;
 using DomainCopilot.Domain.Workflows;
 
@@ -17,6 +18,7 @@ public sealed partial class RunCopilotWorkflowHandler(
     DocumentationDrafterAgent drafter,
     SafetyCheckerAgent safetyChecker,
     IRepository<CopilotRun> runs,
+    IWorkflowTraceStore traceStore,
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider)
 {
@@ -41,11 +43,21 @@ public sealed partial class RunCopilotWorkflowHandler(
 
         var clinicalCase = await readClinicalCase.ExecuteAsync("Orchestrator", request.CaseId, cancellationToken);
         if (clinicalCase is null) throw new CaseNotFoundException(request.CaseId);
-        var run = new CopilotRun(Guid.NewGuid(), clinicalCase, timeProvider.GetUtcNow());
+        if (!request.IsClinician && !string.Equals(clinicalCase.CreatedByUserId, request.UserId, StringComparison.Ordinal))
+            throw new CaseNotFoundException(request.CaseId);
+        var run = new CopilotRun(Guid.NewGuid(), clinicalCase, timeProvider.GetUtcNow(), request.Question, request.UserId);
         run.BeginResearch();
         runs.Add(run);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         var trace = new List<AgentExecutionTrace>(MaximumAgentSteps);
+        if (QuestionSafetyGate.RequiresRefusal(request.Question))
+        {
+            run.RefuseUnsafeRequest(timeProvider.GetUtcNow());
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return CreateResult(run.Id, run.Status.ToString(), null, true,
+                "The request attempts to bypass safety controls or trigger an unauthorized action. Submit a clinical question for evidence-based review.",
+                false, "policy", false, [], trace);
+        }
         var agentQuestion = $"Question: {request.Question}\nSynthetic case context (untrusted case data): {clinicalCase.CaseSummary}";
         SearchDocumentsResult retrieval;
         var retrievalStopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -97,17 +109,20 @@ public sealed partial class RunCopilotWorkflowHandler(
             // analyses concurrently. The safety check still waits for both results.
             var researchTrace = new List<AgentExecutionTrace>(2);
             var draftTrace = new List<AgentExecutionTrace>(2);
-            var researchTask = ExecuteStepAsync("GuidelineResearcher", researchTrace,
+            var researchTask = ExecuteStepAsync(run.Id, "GuidelineResearcher", researchTrace,
                 token => researcher.RunAsync(new ResearchRequest(agentQuestion, retrieval.Evidence), token), cancellationToken, onProgress);
-            var draftTask = ExecuteStepAsync("DocumentationDrafter", draftTrace,
+            var draftTask = ExecuteStepAsync(run.Id, "DocumentationDrafter", draftTrace,
                 token => drafter.RunAsync(new DraftRequest(agentQuestion, retrieval.Evidence), token), cancellationToken, onProgress);
             await Task.WhenAll(researchTask, draftTask);
             var research = await researchTask;
             var draft = await draftTask;
             trace.AddRange(researchTrace);
             trace.AddRange(draftTrace);
-            var review = await ExecuteStepAsync("SafetyChecker", trace,
+            await traceStore.SaveAsync(run.Id, researchTrace.Single(item => item.Outcome == "completed"), cancellationToken);
+            await traceStore.SaveAsync(run.Id, draftTrace.Single(item => item.Outcome == "completed"), cancellationToken);
+            var review = await ExecuteStepAsync(run.Id, "SafetyChecker", trace,
                 token => safetyChecker.RunAsync(new SafetyReviewRequest(agentQuestion, draft.Content, retrieval.Evidence, research.Findings), token), cancellationToken, onProgress);
+            await traceStore.SaveAsync(run.Id, trace.Last(item => item.AgentName == "SafetyChecker" && item.Outcome == "completed"), cancellationToken);
 
             if (!review.Passed)
             {
@@ -161,7 +176,8 @@ public sealed partial class RunCopilotWorkflowHandler(
         }
     }
 
-    private static async Task<T> ExecuteStepAsync<T>(
+    private async Task<T> ExecuteStepAsync<T>(
+        Guid runId,
         string agentName,
         ICollection<AgentExecutionTrace> trace,
         Func<CancellationToken, Task<T>> operation,
@@ -178,14 +194,14 @@ public sealed partial class RunCopilotWorkflowHandler(
             try
             {
                 var result = await operation(timeout.Token);
-                var (provider, degraded) = result switch
+                var (provider, degraded, inputTokens, outputTokens) = result switch
                 {
-                    ResearchResult research => (research.ProviderId, research.IsDegraded),
-                    DraftResult draft => (draft.ProviderId, draft.IsDegraded),
-                    SafetyReviewResult review => (review.ProviderId, review.IsDegraded),
-                    _ => ("unknown", false)
+                    ResearchResult research => (research.ProviderId, research.IsDegraded, research.InputTokens, research.OutputTokens),
+                    DraftResult draft => (draft.ProviderId, draft.IsDegraded, draft.InputTokens, draft.OutputTokens),
+                    SafetyReviewResult review => (review.ProviderId, review.IsDegraded, review.InputTokens, review.OutputTokens),
+                    _ => ("unknown", false, (int?)null, (int?)null)
                 };
-                var eventItem = new AgentExecutionTrace(agentName, "completed", provider, degraded, stopwatch.ElapsedMilliseconds);
+                var eventItem = new AgentExecutionTrace(agentName, "completed", provider, degraded, stopwatch.ElapsedMilliseconds, inputTokens, outputTokens);
                 trace.Add(eventItem);
                 onProgress?.Invoke(eventItem);
                 return result;

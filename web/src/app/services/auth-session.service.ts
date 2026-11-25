@@ -18,6 +18,10 @@ export class AuthSessionService {
     const role = this.claims()?.role;
     return Array.isArray(role) ? role.includes('Clinician') : role === 'Clinician';
   });
+  readonly isResearcher = computed(() => {
+    const role = this.claims()?.role;
+    return Array.isArray(role) ? role.includes('Researcher') : role === 'Researcher';
+  });
 
   saveLogin(result: AuthResult): void {
     sessionStorage.setItem(TOKEN_KEY, result.accessToken);

@@ -62,7 +62,7 @@ public sealed class IngestDocumentHandler(
 
         var document = new SourceDocument(
             Guid.NewGuid(), request.SourceName, request.Format, request.Version,
-            fingerprint, timeProvider.GetUtcNow());
+            fingerprint, timeProvider.GetUtcNow(), request.UploadedByUserId);
         document.BeginProcessing();
         var chunks = chunkTexts.Select((chunk, index) => new DocumentChunk(
             Guid.NewGuid(), document.Id, index, chunk.Text, chunk.Section,

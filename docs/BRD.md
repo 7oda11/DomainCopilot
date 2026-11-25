@@ -96,33 +96,30 @@ Evaluation thresholds will be declared with the evaluation set before measuring.
 
 ## 9. Architecture decisions to record
 
-The following ADRs are required before the corresponding implementation: chunking and hybrid retrieval; orchestration pattern; vector-store choice; offline/degraded provider and local embedding strategy. The recommendation for the vector store is SQLite behind an adapter alongside SQL Server relational persistence, pending compatibility and workload checks. The alternatives and operational tradeoffs will be recorded rather than treated as a silent decision.
+The architecture choices are recorded in `docs/adr/ADR-003-vector-store.md`, `ADR-004-hybrid-retrieval.md`, `ADR-005-provider-fallback.md`, and `ADR-006-orchestration-and-human-approval.md`. Earlier chunks/orchestration ADR coverage remains a gap if the instructor interprets each named decision as requiring its own separate ADR.
 
 ## 10. Requirements traceability
 
-Statuses below are planning statuses, not claims that a feature exists.
+This is a current-state traceability snapshot. “Implemented” describes code/document presence; it does not substitute for a measured acceptance run.
 
-| Assessment requirement | Planned status | Evidence location / phase |
+| Requirement | Current status | Evidence / remaining acceptance |
 |---|---|---|
-| D0 healthcare agents and clinician approval | Partial: case/run/note/decision domain model and approval lifecycle rules exist; agents and review API are pending | `src/DomainCopilot.Domain/Workflows`, `Approvals`, `Notes`; Domain unit tests; agent/API work remains Phase 9–11 |
-| T2 hosted/local automatic fallback and offline operation | Planned | Provider ADR, integration tests, Phase 8 |
-| ≥30 documents / ≥150 pages / synthetic or public only | Verified locally: 30 synthetic PDFs / 150 extractable pages indexed as 150 chunks through the authenticated API | `data/synthetic/corpus-manifest.json`, `docs/INGESTION.md`, `docs/reports/retrieval-baseline-2026-11-21.json` |
-| FR-1 ingestion stages, metadata, idempotency, status | Partial: source fingerprint, format, version and processing states are modelled; extract/clean/chunk/embed/index adapters remain | `Documents/SourceDocument.cs`; pipeline/API work remains Phase 6 |
-| FR-2 hybrid retrieval, enhancement, citations, refusal | Partial: chunks preserve page/section/version and citations verify quoted text belongs to the cited chunk; retrieval/fusion/refusal use case remains | `Documents/DocumentChunk.cs`, `Evidence/EvidenceCitation.cs`; retrieval ADR and evaluation remain Phase 7 |
-| FR-3 ≥25 golden cases, adversarial/injection, runnable metrics | Planned | Harness and report, Phase 12 |
-| FR-4 typed agents, restricted tools, side effect behind gate | Planned | Agent/tool contracts and tests, Phase 9–10 |
-| FR-5 controls, fallback, inspectable traces, audited approvals | Partial: domain run lifecycle enforces ordered safety review and approval; iteration/timeout/retry/fallback/trace persistence remain | `Workflows/CopilotRun.cs`, `Approvals/ApprovalRecord.cs`; Phases 9–10, 12 |
-| FR-6 streaming, progress, cancellation | Planned | API integration tests, Phase 11 |
-| FR-7 documented API, minimal UI/CLI, persistent history | Planned | OpenAPI and demo path, Phase 11, 13 |
-| FR-8 authentication and at least two server-enforced roles | Planned | Authorization tests, Phase 11 |
-| FR-9 correlation, token/cost data, traces, health/readiness | Planned | Observability tests, Phase 9, 11 |
-| Clean Architecture and provider/storage abstractions | Partial: project boundaries, automated dependency checks, repository and Unit of Work ports exist; provider and persistence adapters remain | `DomainCopilot.slnx`, `LayerDependencyTests.cs`, `Application/Abstractions/Persistence`; Phases 5, 8 |
-| Relational store, vector store and migrations | Verified locally: SQL Server LocalDB migrations applied; 30 PDFs indexed into SQL Server and SQLite using Ollama Nomic embeddings | `docs/LOCAL-DEMO.md`, `docs/reports/retrieval-baseline-2026-11-21.json`, `tests/DomainCopilot.Infrastructure.Tests/SqliteVectorIndexTests.cs` |
-| Tests: unit, integration and contract | Partial: domain, application and architecture tests exist; integration/contract tests and CI remain | `tests/DomainCopilot.Domain.Tests`, `tests/DomainCopilot.Application.Tests`, `tests/DomainCopilot.ArchitectureTests`; Phases 5–13 |
-| Docker Compose, seed command, `.env.example` | Planned | Clean-start verification, Phase 13 |
-| OWASP controls and `docs/SECURITY.md` | Planned | Threat/control mapping and security tests, Phase 11–13 |
-| ≥4 ADRs | Planned | `docs/adr/`, Phases 5–9 |
-| BRD, SDD, architecture, README and teaching pack | Planned | `docs/`, `teaching/`, Phase 13 |
-| ≥30 commits / ≥6 days / ≥8 PRs and Git hygiene | Not started; process constraint | Real issue/PR/commit history; no fabricated history |
-| Two videos and public repository | Deferred until working MVP and user action | Submission checklist; user records/publishes videos and repository |
+| D0 healthcare workflow and clinician decision | Implemented, synthetic-only; end-to-end acceptance still needed | Domain workflow, agent handlers, approval API; exercise approve/reject/edit paths |
+| T2 offline/degraded behavior | Partial; disconnected end-to-end is **unverified** | `docs/OFFLINE-VERIFICATION.md`; run with network disabled and record artifacts |
+| 30 documents / 150 pages | Previously verified locally on synthetic corpus | `data/synthetic/corpus-manifest.json`; repeat on submission machine if required |
+| PDF/DOCX ingestion, provenance and idempotency | Implemented; repeatable clean-environment proof needed | Infrastructure tests and `docs/INGESTION.md` |
+| Hybrid retrieval and citation validation | Implemented; baseline corpus/evaluation is limited | `docs/RETRIEVAL.md`, `docs/EVALUATION.md` |
+| Refusal and injection resistance | Partial; refusal agreement is 72%; gate unit tests cover explicit direct bypass requests only | End-to-end answer-level and retrieved-document injection evaluation remains |
+| Typed agents, tools and bounded orchestration | Implemented for fixed workflow | `docs/AGENTIC-WORKFLOW.md`; no autonomous model-selected tool execution |
+| Clinician-only approval | Implemented in API policy; API-level 403 test still required | `ApprovalController`, `Program.cs`, `docs/ROLE-PROVISIONING.md` |
+| User roles and authentication | Implemented; public registration is Researcher-only | JWT role policies; verify both roles via API test |
+| Streaming, progress, cancellation | Progress SSE implemented; generated token streaming not implemented | `POST /api/copilot/drafts/stream`; cancellation test and token-stream capability remain |
+| Persistent run and agent trace | Implemented for completed AI agent stages; migration must be applied | `WorkflowTraceEntries`, `GET /api/copilot/runs/{runId}/trace` |
+| Token/cost observability | Token counts stored when provider reports them; estimated cost requires configured rate values | `docs/PROVIDERS.md`; failures/retrieval are not yet in trace table |
+| Clean Architecture, SQL, vector adapter, UoW/repository | Implemented in solution; clean restore/build was blocked in current environment | Architecture dependency tests, SQL Server migrations, SQLite index |
+| At least 4 ADRs | 4 decisions now recorded | `docs/adr/ADR-003` through `ADR-006` |
+| System design, architecture and AI usage log | Added | `docs/SYSTEM-DESIGN.md`, `docs/ARCHITECTURE.md`, `docs/AI-USAGE-LOG.md` |
+| Teaching pack | Added outlines/materials; instructor rehearsal and slide deck/video files still required | `teaching/` |
+| Security/evaluation reports | Present; answer-level safety and full injection results remain missing | `docs/SECURITY.md`, `docs/EVALUATION.md` |
+| Git process, Docker fresh setup, CI, videos and submission email | Not completed by these code changes | Must be completed and evidenced before submission; do not invent history or test evidence |
 

@@ -1,0 +1,31 @@
+<section class="page workspace-page" dir="rtl">
+  <header class="page-heading">
+    <div><span class="eyebrow">سجل العمل</span><h1>{{ session.isClinician() ? 'كل الحالات والمسودات' : 'حالاتي ومسوداتي' }}</h1>
+      <p>{{ session.isClinician() ? 'عرض شامل لحالات النظام وقرارات اعتماد المسودات.' : 'هنا الحالات والتشغيلات التي أنشأتها أنت فقط.' }}</p></div>
+    <button class="refresh-button" (click)="refresh()" [disabled]="busy()">{{ busy() ? 'جارٍ التحديث...' : 'تحديث السجل' }}</button>
+  </header>
+  <div class="notice error" *ngIf="error()">{{ error() }}</div>
+
+  <section class="records-section">
+    <div class="section-heading"><div><span class="eyebrow">سجل المسودات</span><h2>الأسئلة والإجابات والقرارات</h2></div><span class="count">{{ drafts().length }}</span></div>
+    <p class="empty-state" *ngIf="!busy() && drafts().length === 0">لا توجد مسودات أو تشغيلات مسجلة حتى الآن.</p>
+    <article class="draft-card" *ngFor="let item of drafts()">
+      <div class="draft-card-head"><div><span class="eyebrow">{{ item.createdAtUtc | date:'medium' }}</span><h3>{{ item.question || 'السؤال غير محفوظ في تشغيل قديم' }}</h3></div><span class="status" [ngClass]="statusClass(item.decision || item.status)">{{ statusLabel(item.decision || item.status) }}</span></div>
+      <div class="case-context"><strong>ملخص الحالة</strong><p>{{ item.caseSummary }}</p></div>
+      <div class="answer-block"><strong>{{ item.approvedContent ? 'النص المعتمد' : 'رد المسودة' }}</strong><p>{{ answer(item) }}</p></div>
+      <div class="decision-meta" *ngIf="item.decision">
+        <span>القرار: {{ statusLabel(item.decision) }}</span>
+        <span *ngIf="item.decidedAtUtc">التاريخ: {{ item.decidedAtUtc | date:'medium' }}</span>
+        <span *ngIf="item.reviewerId">{{ item.reviewerId }}</span>
+        <p *ngIf="item.comment">تعليق الطبيب: {{ item.comment }}</p>
+      </div>
+      <div class="identifiers">Case {{ item.caseId }} · Run {{ item.runId }}<span *ngIf="item.draftId"> · Draft {{ item.draftId }}</span></div>
+    </article>
+  </section>
+
+  <section class="records-section cases-section">
+    <div class="section-heading"><div><span class="eyebrow">سجل الحالات</span><h2>الحالات المحفوظة</h2></div><span class="count">{{ cases().length }}</span></div>
+    <p class="empty-state" *ngIf="!busy() && cases().length === 0">لا توجد حالات محفوظة حتى الآن.</p>
+    <article class="case-row" *ngFor="let item of cases()"><div><strong>{{ item.summary }}</strong><small>{{ item.createdAtUtc | date:'medium' }}</small></div><code>{{ item.caseId }}</code></article>
+  </section>
+</section>

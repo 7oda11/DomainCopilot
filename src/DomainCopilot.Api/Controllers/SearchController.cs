@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace DomainCopilot.Api.Controllers;
 
 [ApiController]
-[Authorize(Policy = "ClinicalStaff")]
+[Authorize(Policy = "ResearcherOrClinician")]
 [Route("api/search")]
 public sealed class SearchController(HybridSearchHandler searchHandler) : ControllerBase
 {

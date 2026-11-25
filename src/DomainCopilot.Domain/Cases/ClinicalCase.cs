@@ -8,12 +8,13 @@ public sealed class ClinicalCase : IAggregateRoot
     public Guid Id { get; private set; }
     public string CaseSummary { get; private set; } = string.Empty;
     public DateTimeOffset CreatedAtUtc { get; private set; }
+    public string CreatedByUserId { get; private set; } = string.Empty;
 
     private ClinicalCase()
     {
     }
 
-    public ClinicalCase(Guid id, string caseSummary, DateTimeOffset createdAtUtc)
+    public ClinicalCase(Guid id, string caseSummary, DateTimeOffset createdAtUtc, string createdByUserId = "system")
     {
         if (id == Guid.Empty)
         {
@@ -33,5 +34,6 @@ public sealed class ClinicalCase : IAggregateRoot
         Id = id;
         CaseSummary = caseSummary.Trim();
         CreatedAtUtc = createdAtUtc;
+        CreatedByUserId = string.IsNullOrWhiteSpace(createdByUserId) ? "system" : createdByUserId.Trim();
     }
 }

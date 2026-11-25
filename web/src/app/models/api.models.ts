@@ -44,6 +44,9 @@ export interface AgentTrace {
   providerId: string;
   isDegraded: boolean;
   elapsedMilliseconds: number;
+  inputTokens?: number | null;
+  outputTokens?: number | null;
+  estimatedCostUsd?: number | null;
 }
 
 export interface WorkflowProgress extends AgentTrace {}
@@ -79,6 +82,45 @@ export interface ReviewResponse {
   action: string;
   status: string;
   approvedContent?: string | null;
+}
+
+export interface WorkspaceCase {
+  caseId: string;
+  summary: string;
+  createdAtUtc: string;
+}
+
+export interface WorkspaceDraft {
+  caseId: string;
+  runId: string;
+  draftId?: string | null;
+  caseSummary: string;
+  question: string;
+  draftContent?: string | null;
+  status: string;
+  createdAtUtc: string;
+  decision?: string | null;
+  decidedAtUtc?: string | null;
+  reviewerId?: string | null;
+  comment?: string | null;
+  approvedContent?: string | null;
+}
+
+export interface WorkspaceDocument {
+  documentId: string;
+  fileName: string;
+  format: string;
+  version: string;
+  status: string;
+  uploadedAtUtc: string;
+}
+
+export interface WorkspaceDocumentContent {
+  documentId: string;
+  fileName: string;
+  format: string;
+  version: string;
+  text: string;
 }
 
 export type AccountRole = 'Clinician' | 'Researcher' | string;

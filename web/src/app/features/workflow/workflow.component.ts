@@ -62,7 +62,18 @@ export class WorkflowComponent {
     if (!draftId) return;
     this.busy.set(true); this.error.set(''); this.message.set('');
     this.api.reviewDraft(draftId, action, this.reviewComment, action === 'EditedAndApproved' ? this.editedDraft : undefined).subscribe({
-      next: response => { this.message.set(`اتسجل القرار: ${response.action}. حالة التشغيل: ${response.status}.`); this.busy.set(false); },
+      next: response => {
+        if (this.result) {
+          this.result = { ...this.result, status: response.status, draft: response.approvedContent ?? this.result.draft };
+        }
+        const labels: Record<string, string> = {
+          Approved: 'تم اعتماد المسودة بنجاح.',
+          EditedAndApproved: 'تم اعتماد المسودة بعد التعديل بنجاح.',
+          Rejected: 'تم رفض المسودة وتسجيل القرار.',
+        };
+        this.message.set(labels[response.action] ?? ('تم تسجيل القرار: ' + response.status + '.'));
+        this.busy.set(false);
+      },
       error: (err: HttpErrorResponse) => this.handleError(err),
     });
   }
@@ -98,7 +109,7 @@ export class WorkflowComponent {
 
   private handleError(err: HttpErrorResponse): void {
     this.error.set(err.status === 403
-      ? 'حسابك محتاج دور Researcher أو Clinician لتنفيذ العملية.'
+      ? 'حسابك لا يملك الصلاحية المطلوبة. اعتماد المسودة متاح للطبيب فقط.'
       : err.status === 404 ? 'رقم الحالة مش موجود في قاعدة البيانات.'
       : err.status === 0 ? 'مش قادر أوصل للـAPI.'
       : (err.error?.detail ?? err.error?.title ?? 'العملية فشلت.'));

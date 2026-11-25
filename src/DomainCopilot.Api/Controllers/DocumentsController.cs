@@ -3,16 +3,19 @@ using DomainCopilot.Application.Features.Ingestion;
 using DomainCopilot.Domain.Documents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using DomainCopilot.Application.Abstractions.Workspace;
 
 namespace DomainCopilot.Api.Controllers;
 
 [ApiController]
-[Authorize(Policy = "ClinicalStaff")]
+[Authorize(Policy = "ResearcherOrClinician")]
 [Route("api/documents")]
-public sealed class DocumentsController(IngestDocumentHandler ingestDocument) : ControllerBase
+public sealed class DocumentsController(IngestDocumentHandler ingestDocument, IWorkspaceReadStore workspace) : ControllerBase
 {
     private const long MaximumUploadBytes = 25 * 1024 * 1024;
 
+    [Authorize(Policy = "Researcher")]
     [HttpPost]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(MaximumUploadBytes)]
@@ -52,7 +55,8 @@ public sealed class DocumentsController(IngestDocumentHandler ingestDocument) : 
         try
         {
             result = await ingestDocument.HandleAsync(
-                new IngestDocumentRequest(Path.GetFileName(request.File.FileName), request.Version, format.Value, buffer.ToArray()),
+                new IngestDocumentRequest(Path.GetFileName(request.File.FileName), request.Version, format.Value,
+                    buffer.ToArray(), User.FindFirstValue("sub") ?? string.Empty),
                 cancellationToken);
         }
         catch (ArgumentException exception)
@@ -65,5 +69,18 @@ public sealed class DocumentsController(IngestDocumentHandler ingestDocument) : 
         }
 
         return Ok(new UploadDocumentResponse(result.DocumentId, result.WasAlreadyIndexed, result.ChunkCount));
+    }
+
+    [Authorize(Policy = "Clinician")]
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<WorkspaceDocument>>> GetAll(CancellationToken cancellationToken) =>
+        Ok(await workspace.GetDocumentsAsync(cancellationToken));
+
+    [Authorize(Policy = "Clinician")]
+    [HttpGet("{documentId:guid}/content")]
+    public async Task<ActionResult<WorkspaceDocumentContent>> GetContent(Guid documentId, CancellationToken cancellationToken)
+    {
+        var document = await workspace.GetDocumentContentAsync(documentId, cancellationToken);
+        return document is null ? NotFound() : Ok(document);
     }
 }

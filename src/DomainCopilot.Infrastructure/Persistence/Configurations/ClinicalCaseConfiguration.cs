@@ -14,5 +14,7 @@ public sealed class ClinicalCaseConfiguration : IEntityTypeConfiguration<Clinica
             .HasMaxLength(8000)
             .IsRequired();
         builder.Property(clinicalCase => clinicalCase.CreatedAtUtc).IsRequired();
+        builder.Property(clinicalCase => clinicalCase.CreatedByUserId).HasMaxLength(200).IsRequired();
+        builder.HasIndex(clinicalCase => new { clinicalCase.CreatedByUserId, clinicalCase.CreatedAtUtc });
     }
 }

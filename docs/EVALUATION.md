@@ -53,5 +53,10 @@ After this retrieval run, a separate synthetic draft smoke test exercised the lo
 - Groundedness checks exact support-term presence in citation text, which can miss paraphrases and can reward keyword overlap without proving entailment.
 - No answer-generation route is measured, so no answer-level claim/citation entailment score exists.
 - The indirect-injection case needs an indexed malicious document and a workflow-level assertion that the malicious instruction did not alter tool permissions or draft content.
-- Per-request token/cost accounting and persistent agent trace metrics remain part of the broader observability work.
+- Completed-agent token counts and optional Gemini cost estimates are now persisted; provider-reported usage may be null, and failed-stage/retrieval traces are still not persisted.
 - The retrieval baseline measures search only; it does not include the separate local Qwen workflow smoke test described above.
+## Current safety caveat (2026-11-24)
+
+The recorded 25-case baseline remains a retrieval evaluation, not a completed answer-generation safety evaluation: source hit rate 100% for 18 answerable cases, lexical support proxy 100%, and refusal-flag agreement 72% across 25 cases. Seven expected-refusal cases still retrieved evidence; retrieval results must not be treated as a generated answer or a safety decision.
+
+A deterministic pre-retrieval gate now rejects a small set of explicit direct attempts to bypass approval, disregard instructions/evidence, or trigger tools; unit tests cover representative English and Arabic requests. This does **not** establish resistance to indirect or obfuscated injection in retrieved documents, nor full workflow robustness. Run the golden set through the complete API/model workflow and report unsafe false accepts before claiming safety success. Never tune thresholds after seeing scores just to improve the headline metric.

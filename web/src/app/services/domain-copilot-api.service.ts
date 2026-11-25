@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   AuthResult, CreatedCase, RegisteredUser, ReviewResponse,
   SearchResponse, UploadResponse, WorkflowResponse, WorkflowProgress, WorkflowStreamEvent,
+  WorkspaceCase, WorkspaceDraft, WorkspaceDocument, WorkspaceDocumentContent,
 } from '../models/api.models';
 import { AuthSessionService } from './auth-session.service';
 
@@ -44,6 +45,22 @@ export class DomainCopilotApiService {
 
   createCase(summary: string): Observable<CreatedCase> {
     return this.http.post<CreatedCase>('/api/cases', { syntheticCaseSummary: summary });
+  }
+
+  workspaceCases(): Observable<WorkspaceCase[]> {
+    return this.http.get<WorkspaceCase[]>('/api/workspace/cases');
+  }
+
+  workspaceDrafts(): Observable<WorkspaceDraft[]> {
+    return this.http.get<WorkspaceDraft[]>('/api/workspace/drafts');
+  }
+
+  allDocuments(): Observable<WorkspaceDocument[]> {
+    return this.http.get<WorkspaceDocument[]>('/api/documents');
+  }
+
+  documentContent(documentId: string): Observable<WorkspaceDocumentContent> {
+    return this.http.get<WorkspaceDocumentContent>(`/api/documents/${documentId}/content`);
   }
 
   createDraft(caseId: string, question: string, evidenceLimit: number): Observable<WorkflowResponse> {

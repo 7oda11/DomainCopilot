@@ -13,6 +13,7 @@ public sealed class SourceDocument : IAggregateRoot
     public DateTimeOffset CreatedAtUtc { get; private set; }
     public DocumentProcessingStatus Status { get; private set; }
     public string? FailureReason { get; private set; }
+    public string UploadedByUserId { get; private set; } = string.Empty;
 
     private SourceDocument()
     {
@@ -24,7 +25,8 @@ public sealed class SourceDocument : IAggregateRoot
         DocumentFormat format,
         string version,
         string contentSha256,
-        DateTimeOffset createdAtUtc)
+        DateTimeOffset createdAtUtc,
+        string uploadedByUserId = "system")
     {
         if (id == Guid.Empty)
         {
@@ -59,6 +61,7 @@ public sealed class SourceDocument : IAggregateRoot
         Version = version.Trim();
         ContentSha256 = contentSha256.ToLowerInvariant();
         CreatedAtUtc = createdAtUtc;
+        UploadedByUserId = string.IsNullOrWhiteSpace(uploadedByUserId) ? "system" : uploadedByUserId.Trim();
         Status = DocumentProcessingStatus.Received;
     }
 

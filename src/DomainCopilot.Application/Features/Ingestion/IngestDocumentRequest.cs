@@ -6,4 +6,5 @@ public sealed record IngestDocumentRequest(
     string SourceName,
     string Version,
     DocumentFormat Format,
-    byte[] Content);
+    byte[] Content,
+    string UploadedByUserId = "system");

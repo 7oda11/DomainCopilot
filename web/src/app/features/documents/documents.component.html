@@ -1,5 +1,14 @@
 <section class="page" dir="rtl">
-  <header class="page-heading"><div><span class="eyebrow">قاعدة المعرفة</span><h1>المستندات و<em>الفهرسة</em></h1><p>المستند بيتحوّل لمقاطع وembeddings عشان يبقى قابل للبحث.</p></div><span class="format-pill">PDF · DOCX</span></header>
+  <header class="page-heading"><div><span class="eyebrow">{{ session.isClinician() ? 'مكتبة النظام' : 'قاعدة المعرفة' }}</span><h1>{{ session.isClinician() ? 'ملفات النظام' : 'رفع مستند' }} <em>{{ session.isClinician() ? 'المفهرسة' : 'للفهرسة' }}</em></h1><p>{{ session.isClinician() ? 'كل الملفات الموجودة ومحتواها المستخرج للقراءة.' : 'ارفع مصدرًا معتمدًا لإضافته إلى قاعدة البحث.' }}</p></div><span class="format-pill">PDF · DOCX</span></header>
+  <div class="message error" *ngIf="error()">{{ error() }}</div>
+  @if (session.isClinician()) {
+  <section class="library-card">
+    <div class="library-heading"><div><span class="eyebrow">مكتبة المستندات</span><h2>الملفات الموجودة على النظام</h2></div><button class="button refresh-library" (click)="loadDocuments()" [disabled]="busy()">تحديث</button></div>
+    <p class="empty-library" *ngIf="documents().length === 0 && !busy()">لا توجد ملفات مفهرسة على النظام.</p>
+    <article class="file-row" *ngFor="let document of documents()"><div><strong>{{ document.fileName }}</strong><small>{{ document.format }} · {{ document.version }} · {{ document.status }} · {{ document.uploadedAtUtc | date:'medium' }}</small></div><button class="button open-file" (click)="openDocument(document)" [disabled]="busy()">فتح المحتوى</button></article>
+  </section>
+  <section class="document-reader" *ngIf="openedDocument() as opened"><header><div><span class="eyebrow">{{ opened.format }} · {{ opened.version }}</span><h2>{{ opened.fileName }}</h2></div><button class="button close-reader" (click)="closeDocument()">إغلاق</button></header><pre>{{ opened.text }}</pre></section>
+  } @else {
   <div class="upload-layout">
     <form class="upload-card" (ngSubmit)="upload()">
       <div class="card-heading"><div><span class="eyebrow">مستند جديد</span><h2>أضف مصدرًا للبحث</h2></div><span class="step-no">01</span></div>
@@ -11,7 +20,7 @@
       </label>
       <label class="field-label" for="version">رقم الإصدار</label><input id="version" class="text-input" name="version" [(ngModel)]="version" required maxlength="80" placeholder="مثال: 2026-v1">
       <button class="button button-primary" [disabled]="busy() || !file">{{ busy() ? 'بنستخرج النص وبنفهرس...' : 'ارفع وابدأ الفهرسة' }} <span>←</span></button>
-      <div class="message success" *ngIf="success()">{{ success() }}</div><div class="message error" *ngIf="error()">{{ error() }}</div>
+      <div class="message success" *ngIf="success()">{{ success() }}</div>
     </form>
     <aside class="process-card"><span class="eyebrow">اللي بيحصل بعد الرفع</span><h2>من الملف للمعلومة</h2>
       <div class="process-step"><span>1</span><div><strong>استخراج النص</strong><p>قراءة النص والصفحات من PDF أو DOCX.</p></div></div>
@@ -21,4 +30,5 @@
       <div class="privacy-note"><span>ⓘ</span><p>تجنب رفع مستندات تحتوي على بيانات شخصية أو سرية.</p></div>
     </aside>
   </div>
+  }
 </section>

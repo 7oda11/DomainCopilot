@@ -2,7 +2,7 @@
 
 ## Orchestration pattern
 
-The workflow uses a bounded sequential pipeline: retrieve evidence, run the Guideline Researcher, pass findings to the Documentation Drafter, then send the draft to the Safety Checker. Each model call has a 100-second agent-stage timeout, one retry with a 250 ms backoff, a provider-level timeout, and request cancellation. Provider outages degrade to local Ollama; if both providers fail, the run is marked failed and only retrieved evidence is returned.
+The workflow retrieves evidence first, then runs the Guideline Researcher and Documentation Drafter concurrently over the same evidence. The Safety Checker runs after both complete. Each model call has a 100-second agent-stage timeout, one retry with a 250 ms backoff, a provider-level timeout, and request cancellation. Provider outages degrade to local Ollama; if both providers fail, the run is marked failed and only retrieved evidence is returned.
 
 ## Agent contracts and permissions
 
@@ -25,4 +25,4 @@ The LLMs do not receive dynamic function-calling tools; the orchestrator invokes
 
 ## Trace and limitations
 
-The request returns a run ID, provider/degraded-mode status, cited evidence and per-agent progress through SSE at `POST /api/copilot/drafts/stream`. Cancelling the HTTP request cancels the linked model work and marks the persisted run cancelled when the handler observes cancellation. Progress events are returned to the caller; only final workflow/domain state and approval decisions are stored. A durable per-agent audit trace is still required for production.
+The request returns a run ID, provider/degraded-mode status, cited evidence and per-agent progress through SSE at `POST /api/copilot/drafts/stream`. Cancelling the HTTP request cancels the linked model work and marks the persisted run cancelled when the handler observes cancellation. Completed agent traces, provider token counts and optional configured cost estimates are stored in SQL and can be retrieved at `GET /api/copilot/runs/{runId}/trace`. Failed stages and retrieval are not recorded in this per-agent table yet.

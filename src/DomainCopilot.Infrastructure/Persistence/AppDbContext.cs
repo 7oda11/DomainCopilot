@@ -5,6 +5,7 @@ using DomainCopilot.Domain.Notes;
 using DomainCopilot.Domain.Approvals;
 using DomainCopilot.Domain.Users;
 using DomainCopilot.Application.Abstractions.Persistence;
+using DomainCopilot.Infrastructure.Observability;
 using Microsoft.EntityFrameworkCore;
 
 namespace DomainCopilot.Infrastructure.Persistence;
@@ -19,6 +20,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<ClinicalNoteDraft> ClinicalNoteDrafts => Set<ClinicalNoteDraft>();
     public DbSet<ApprovalRecord> ApprovalRecords => Set<ApprovalRecord>();
     public DbSet<UserAccount> UserAccounts => Set<UserAccount>();
+    public DbSet<WorkflowTraceEntry> WorkflowTraceEntries => Set<WorkflowTraceEntry>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

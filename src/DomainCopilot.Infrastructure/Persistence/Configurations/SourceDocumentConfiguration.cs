@@ -17,6 +17,8 @@ public sealed class SourceDocumentConfiguration : IEntityTypeConfiguration<Sourc
         builder.Property(document => document.Status).HasConversion<string>().HasMaxLength(16);
         builder.Property(document => document.FailureReason).HasMaxLength(2000);
         builder.Property(document => document.CreatedAtUtc).IsRequired();
+        builder.Property(document => document.UploadedByUserId).HasMaxLength(200).IsRequired();
+        builder.HasIndex(document => new { document.UploadedByUserId, document.CreatedAtUtc });
         builder.HasIndex(document => new { document.ContentSha256, document.Version }).IsUnique();
     }
 }

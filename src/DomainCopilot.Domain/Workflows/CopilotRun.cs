@@ -15,12 +15,15 @@ public sealed class CopilotRun : IAggregateRoot
     public string? FailureReason { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; }
     public DateTimeOffset? CompletedAtUtc { get; private set; }
+    public string CreatedByUserId { get; private set; } = string.Empty;
+    public string Question { get; private set; } = string.Empty;
 
     private CopilotRun()
     {
     }
 
-    public CopilotRun(Guid id, ClinicalCase clinicalCase, DateTimeOffset createdAtUtc)
+    public CopilotRun(Guid id, ClinicalCase clinicalCase, DateTimeOffset createdAtUtc,
+        string question = "", string? createdByUserId = null)
     {
         if (id == Guid.Empty)
         {
@@ -33,6 +36,8 @@ public sealed class CopilotRun : IAggregateRoot
         Id = id;
         CaseId = clinicalCase.Id;
         CreatedAtUtc = createdAtUtc;
+        Question = question.Trim();
+        CreatedByUserId = string.IsNullOrWhiteSpace(createdByUserId) ? clinicalCase.CreatedByUserId : createdByUserId.Trim();
         Status = CopilotRunStatus.Created;
     }
 
@@ -40,6 +45,13 @@ public sealed class CopilotRun : IAggregateRoot
     {
         EnsureStatus(CopilotRunStatus.Created);
         Status = CopilotRunStatus.Researching;
+    }
+
+    public void RefuseUnsafeRequest(DateTimeOffset refusedAtUtc)
+    {
+        EnsureStatus(CopilotRunStatus.Researching);
+        CompleteAt(refusedAtUtc);
+        Status = CopilotRunStatus.Refused;
     }
 
     public void CompleteResearch()

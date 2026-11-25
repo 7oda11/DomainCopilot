@@ -2,16 +2,18 @@ using DomainCopilot.Api.Contracts.Cases;
 using DomainCopilot.Application.Abstractions.Persistence;
 using DomainCopilot.Domain.Cases;
 using DomainCopilot.Application.Security;
+using DomainCopilot.Application.Abstractions.Workspace;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DomainCopilot.Api.Controllers;
 
 [ApiController]
-[Authorize(Policy = "ClinicalStaff")]
+[Authorize(Policy = "ResearcherOrClinician")]
 [Route("api/cases")]
 public sealed class CasesController(IRepository<ClinicalCase> cases, IUnitOfWork unitOfWork,
-    TimeProvider timeProvider, PiiRedactor piiRedactor) : ControllerBase
+    TimeProvider timeProvider, PiiRedactor piiRedactor, IWorkspaceReadStore workspace) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType<ClinicalCaseResponse>(StatusCodes.Status201Created)]
@@ -26,7 +28,9 @@ public sealed class CasesController(IRepository<ClinicalCase> cases, IUnitOfWork
         }
 
         var safeSummary = piiRedactor.Redact(request.SyntheticCaseSummary);
-        var clinicalCase = new ClinicalCase(Guid.NewGuid(), safeSummary, timeProvider.GetUtcNow());
+        var userId = User.FindFirstValue("sub");
+        if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
+        var clinicalCase = new ClinicalCase(Guid.NewGuid(), safeSummary, timeProvider.GetUtcNow(), userId);
         cases.Add(clinicalCase);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return CreatedAtAction(nameof(GetById), new { caseId = clinicalCase.Id },
@@ -36,8 +40,11 @@ public sealed class CasesController(IRepository<ClinicalCase> cases, IUnitOfWork
     [HttpGet("{caseId:guid}")]
     public async Task<ActionResult<ClinicalCaseDetailsResponse>> GetById(Guid caseId, CancellationToken cancellationToken)
     {
-        var clinicalCase = await cases.GetByIdAsync(caseId, cancellationToken);
+        var userId = User.FindFirstValue("sub");
+        if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
+        var clinicalCase = await workspace.GetCaseAsync(caseId, userId,
+            User.IsInRole("Clinician"), cancellationToken);
         if (clinicalCase is null) return NotFound();
-        return Ok(new ClinicalCaseDetailsResponse(clinicalCase.Id, clinicalCase.CaseSummary, clinicalCase.CreatedAtUtc));
+        return Ok(new ClinicalCaseDetailsResponse(clinicalCase.CaseId, clinicalCase.Summary, clinicalCase.CreatedAtUtc));
     }
 }

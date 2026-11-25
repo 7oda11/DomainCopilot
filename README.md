@@ -15,7 +15,7 @@ DomainCopilot.Api -> DomainCopilot.Application -> DomainCopilot.Domain
 
 - `POST /api/documents`: accept text PDF or DOCX, extract and chunk content, persist source records in SQL Server, and create embedding vectors in SQLite.
 - `POST /api/search`: run dense and keyword retrieval, fuse the rankings with RRF, and return chunk-level citations or an explicit no-evidence result.
-- `POST /api/cases`: create a case summary for the demo (Clinician role).
+- `POST /api/cases`: create a synthetic case summary (Researcher or Clinician).
 - `POST /api/copilot/drafts`: run the three-agent pipeline and save a draft for clinician review; `/stream` returns SSE progress.
 - `POST /api/drafts/{draftId}/review`: approve, reject or edit-and-approve (Clinician role).
 
@@ -23,7 +23,9 @@ The API provides `POST /api/auth/register` and `POST /api/auth/login`. Registrat
 
 Run `dotnet run --project src/DomainCopilot.Api --launch-profile http` to start the API and open Swagger UI at `http://localhost:5161/swagger`. The importable Postman collection is [`postman/DomainCopilot.postman_collection.json`](postman/DomainCopilot.postman_collection.json); select an environment, register, then log in to save the bearer token.
 
-The standalone Angular workspace for **HealthCareCopilot** is in [`web/`](web/README.md). Start the API, then run `npm install` and `npm start` from `web/`; the UI opens at `http://localhost:4200` and proxies `/api` calls to the API on port 5161. Both `Researcher` and `Clinician` accounts can use the workspace and review pending drafts.
+Before first run, apply the database schema with `dotnet ef database update --project src/DomainCopilot.Infrastructure --startup-project src/DomainCopilot.Api`. To create a local Clinician demo account, follow [`docs/ROLE-PROVISIONING.md`](docs/ROLE-PROVISIONING.md).
+
+The standalone Angular workspace for **HealthCareCopilot** is in [`web/`](web/README.md). Start the API, then run `npm install` and `npm start` from `web/`; the UI opens at `http://localhost:4200` and proxies `/api` calls to the API on port 5161. Both roles can search and generate drafts; only `Clinician` can review/approve them. `Researcher` can upload documents.
 
 Readable, entirely fictional sample documents for local retrieval are in [`docs/samples/`](docs/samples/README.md). Do not use these examples as clinical guidance.
 
@@ -31,7 +33,7 @@ Readable, entirely fictional sample documents for local retrieval are in [`docs/
 
 The repository includes 30 generated, fictional workflow PDFs with five explicit pages each (150 pages total). Regenerate them with `python scripts/generate_synthetic_corpus.py` (requires `reportlab`); the script writes a SHA-256 manifest. To index them, start the API and SQL Server, then set `DOMAINCOPILOT_API_URL` and `DOMAINCOPILOT_BEARER_TOKEN` and run `./scripts/ingest-synthetic-corpus.ps1` in PowerShell 7. No real patient data is included. These documents are engineering fixtures, not clinical guidance.
 
-Chat-provider adapters, Gemini-to-Ollama failover, three agent stages, tool allow-lists, an approval queue, a JWT-protected API and an API-based evaluation harness are implemented. The 30-document synthetic corpus was indexed through the authenticated API using SQL Server LocalDB and local Nomic embeddings; the recorded retrieval baseline has a 100% source hit rate, 100% lexical groundedness proxy and 72% search refusal-flag agreement. A synthetic draft also completed the three-agent workflow using local Qwen and reached `AwaitingApproval`. A fully disconnected run, durable per-agent traces and an actual EHR integration remain incomplete. Read the [local demo guide](docs/LOCAL-DEMO.md), [evaluation methodology](docs/EVALUATION.md), [security notes](docs/SECURITY.md), [ingestion guide](docs/INGESTION.md), [retrieval strategy](docs/RETRIEVAL.md) and [provider setup](docs/PROVIDERS.md) before running locally.
+Chat-provider adapters, Gemini-to-Ollama failover, three agent stages, tool allow-lists, an approval queue, a JWT-protected API and an API-based evaluation harness are implemented. The 30-document synthetic corpus was indexed through the authenticated API using SQL Server LocalDB and local Nomic embeddings; the recorded retrieval baseline has a 100% source hit rate, 100% lexical groundedness proxy and 72% search refusal-flag agreement. A synthetic draft also completed the three-agent workflow using local Qwen and reached `AwaitingApproval`. Durable completed-agent traces are implemented but need the included migration applied; a fully disconnected run and an actual EHR integration remain incomplete. Read the [offline verification checklist](docs/OFFLINE-VERIFICATION.md), [local demo guide](docs/LOCAL-DEMO.md), [evaluation methodology](docs/EVALUATION.md), [security notes](docs/SECURITY.md), [ingestion guide](docs/INGESTION.md), [retrieval strategy](docs/RETRIEVAL.md) and [provider setup](docs/PROVIDERS.md) before running locally.
 
 ## Prerequisites
 

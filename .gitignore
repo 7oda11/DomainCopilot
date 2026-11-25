@@ -3,6 +3,7 @@
 .vs/
 .idea/
 .dotnet-cli-home/
+/.sdk/
 .env
 .env.*
 !.env.example

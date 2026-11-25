@@ -31,7 +31,7 @@ Run the API from the repository root with `dotnet run --project src/DomainCopilo
 
 ## Demo sequence
 
-1. `POST /api/cases` with `{ "syntheticCaseSummary": "Synthetic test scenario only" }` as a `Clinician`.
+1. `POST /api/cases` with `{ "syntheticCaseSummary": "Synthetic case scenario only" }` as a `Researcher` or `Clinician`.
 2. Set a valid role token as `DOMAINCOPILOT_BEARER_TOKEN` and run `./scripts/ingest-synthetic-corpus.ps1` to index the included 30-document synthetic corpus, or upload one public/synthetic PDF or DOCX through `POST /api/documents`.
 3. `POST /api/copilot/drafts` with the returned `caseId` and a question.
 4. Inspect returned evidence and progress; only a successful safety review returns `AwaitingApproval` and `draftId`.
@@ -41,4 +41,4 @@ For a local-only model run set `AI_PRIMARY_PROVIDER=ollama` in `.env`, keep `EMB
 
 ## Boundaries
 
-The 30-document / 150-page synthetic corpus is bundled and was indexed into SQL Server LocalDB and SQLite using Ollama Nomic embeddings. The live retrieval baseline is recorded in `docs/EVALUATION.md`; it measures retrieval and lexical support, not generated-answer safety. Local Qwen generated a synthetic draft that reached the clinician approval gate. A disconnected end-to-end run remains unverified. OCR, answer-level groundedness, persistent agent traces, a reusable local identity-provider fixture and production EHR publishing remain open tasks. No real medical data is included. Do not use this MVP for patient care.
+The 30-document / 150-page synthetic corpus is bundled and was indexed into SQL Server LocalDB and SQLite using Ollama Nomic embeddings. The live retrieval baseline is recorded in `docs/EVALUATION.md`; it measures retrieval and lexical support, not generated-answer safety. Local Qwen generated a synthetic draft that reached the clinician approval gate. A disconnected end-to-end run remains unverified. OCR, answer-level groundedness, failed-stage/retrieval trace records, a reusable local identity-provider fixture and production EHR publishing remain open tasks. No real medical data is included. Do not use this MVP for patient care.
