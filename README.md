@@ -11,6 +11,12 @@ DomainCopilot.Api -> DomainCopilot.Application -> DomainCopilot.Domain
 
 `Domain` owns business rules. `Application` owns use cases and ports. `Infrastructure` implements SQL Server, document extraction, provider adapters and a local SQLite vector index. `Api` is the composition root and HTTP boundary. Domain and Application must not reference Infrastructure, web frameworks, provider SDKs or vector-store SDKs.
 
+## Submission assets
+
+- [D0T2 submission pack guide](docs/SUBMISSION-PACK.md) and [formatted Word version](docs/SUBMISSION-PACK-GUIDE.docx)
+- [Project overview deck (22 slides)](teaching/presentations/HealthCareCopilot-Project-Overview.pptx)
+- [Short RAG explainer (9 slides)](teaching/presentations/HealthCareCopilot-RAG-Explainer.pptx)
+
 ## Current API slices
 
 - `POST /api/documents`: accept text PDF or DOCX, extract and chunk content, persist source records in SQL Server, and create embedding vectors in SQLite.
